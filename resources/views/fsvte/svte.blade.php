@@ -190,7 +190,16 @@
               @foreach($fichas as $key => $dato)
                 <tr>
                   <td>{{ $dato['folio'] }}</td>
-                  <td>{{ $dato['detalleComision']['nombre'] }}</td>
+                  <td>
+                    @php $val = ''; @endphp
+                    @foreach($dato['name'] as $name)
+                      @php 
+                        $val != '' && $val .= ' / ';
+                        $val .= $name
+                      @endphp
+                    @endforeach
+                    {{ $val }}
+                  </td>
                   <td>{{ date('d/m/Y H:i:s', strtotime($dato['created'])) }}</td>
                   <td>{{ $dato['status'] }}</td>
                   <td></td>

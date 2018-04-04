@@ -19,7 +19,9 @@ Route::get('/logout',function(){return redirect(env('APP_PLATAFORMA').'/logout')
 
 // Route::get('/principal','Main@principal')->middleware('auth.plataforma');
 Route::get('/principal','Principal@svte')->middleware('auth.plataforma');
-Route::get('/crearNueva', function(){return view('crearNueva');});
+Route::get('/crearNueva', function(){
+	return view('crearNueva');
+});
 // Route::get('/autorizadas', 'Principal@svteAutOperativo');
 // Route::get('/rechazadas', 'Principal@svteRechOperativo');
 
@@ -40,7 +42,7 @@ Route::get('/svte','Principal@svte');
 // Route::get('/getMunicipio', 'fsvte@getMunicipio');
 // Route::get('/getContinente', 'fsvte@getContinente');
 // Route::get('/getPaisInternacional', 'fsvte@getPaisInternacional');
-// Route::get('/svte/{id}','Principal@svteid');
+Route::get('/svte/{id}','Principal@svteid');
 // Route::get('/cancelFicha','Principal@cancelarFichaArray');
 // Route::get('/addFicha','Principal@agregaFichaArray');
 // Route::get('/editFicha/{id}','Principal@editaFichaArray');

@@ -30,37 +30,48 @@
       </div>
     </div>  
     <div class="divIzquierdo">
-        <div class="sidebar">
-            <div class="titulo" style="font-size:18px">Registro de Viático</div>
-            <div class="elementos">
-                <ul>
-                    @foreach($sidebar as $key=>$item)
-                      @if(in_array(Session::get('fase.detalleComision.nombre'),$item['type']))
-                        <li class="{{ (isset($item['active']))? 'active':'' }}">
-                            <a class="enviaFase" href="{{ url('/svte/'.$item['id']) }}">
-                                <div>
-                                    @if($key!='registroPersonalI' && $key!='registroPersonalN')
-                                        @if(Session::get('fase.'.$key.'.vacio') || !Session::has('fase.'.$key.'.vacio'))
-                                            <i id="{{ $item['id'] }}" class="fa fa-close cross"></i>
-                                        @else
-                                            <i id="{{ $item['id'] }}" class="fa fa-check check"></i>
-                                        @endif
-                                    @else
-                                        @if(empty(Session::get('fase.'.$key)))
-                                            <i id="{{ $item['id'] }}" class="fa fa-close cross"></i>
-                                        @else
-                                            <i id="{{ $item['id'] }}" class="fa fa-check check"></i>
-                                        @endif
-                                    @endif
-                                    <label class="sideBarItem">{{ $item['nombre'] }}</label>
-                                </div>
-                            </a>
-                        </li>
-                      @endif
-                    @endforeach
-                </ul>
-            </div>
+      <div class="sidebar">
+        <div class="titulo" style="font-size:18px">Registro de Viático</div>
+        <div class="elementos">
+          <ul>
+            @foreach($sidebar as $key => $item)
+              @php
+                $tipoFase = []; 
+                $fases = Session::get('fase.requisicion.name');
+              @endphp
+              @foreach($item['type'] as $type)
+                @foreach(array_keys($fases) as $k => $dataFase)
+                  @if($type == $k)
+                    @php $tipoFase[] = in_array($type, array_keys($fases)); @endphp
+                  @endif
+                @endforeach
+              @endforeach
+                @if(in_array(true, $tipoFase))
+                  <li class="{{ (isset($item['active']))? 'active':'' }}">
+                    <a class="enviaFase" href="{{ url('/svte/'.$item['id']) }}">
+                      <div>
+                        @if($key != 'requisicion')
+                          @if(Session::get('fase.'.$key.'.vacio') || !Session::has('fase.'.$key.'.vacio'))
+                              <i id="{{ $item['id'] }}" class="fa fa-close cross"></i>
+                          @else
+                              <i id="{{ $item['id'] }}" class="fa fa-check check"></i>
+                          @endif
+                        @else
+                          @if(empty(Session::get('fase.'.$key)))
+                              <i id="{{ $item['id'] }}" class="fa fa-close cross"></i>
+                          @else
+                              <i id="{{ $item['id'] }}" class="fa fa-check check"></i>
+                          @endif
+                        @endif
+                        <label class="sideBarItem">{{ $item['nombre'] }}</label>
+                      </div>
+                    </a>
+                  </li>
+                @endif
+            @endforeach
+          </ul>
         </div>
+      </div>
     </div>
     <div class="divDerecho">
     @php ($view = 'fsvte.'.Session::get('faseActual'))

@@ -120,14 +120,22 @@ class fsvte extends Controller{
   public function creaFicha(Request $request){
     $input = $request->input();
     $util = new Utilidades();
-    $parametros = ['security'=>[
+    $typeName = $input['tipo'];
+    $res = [];
+    foreach ($typeName as $key => $value) {
+      list($k, $v) = explode('|', $value);
+      $res[$k] = $v;
+    }
+    $parametros = [
+      'security'=>[
         'sessionId' => \Session::get('sessionId')
       ],
       'data'=>[
-        'name' => $input['tipo'],
+        'name' => $res,
         'anio' => json_decode($input['year'])
       ]
     ];
+    // dd($parametros);
     $json = $util->muleConnection('POST','/comsoc/saveSchemaExpediente', 10017,$parametros);
     // dd($json);
     if($json['error']['code']==0){
@@ -142,6 +150,7 @@ class fsvte extends Controller{
       \Session::put('faseActualDatos','fase.requisicion');
       $parametros  = $this->generaFases() + $this->generaDefinicion();
       \Session::put('urlBack', '/svte');        
+      // dd([$parametros, \Session::all()]);
       return \View::make('fsvte.fichaSVTE')->with($parametros);        
     }else{
       $retorno = json_encode(['color'=>'#C6383D',

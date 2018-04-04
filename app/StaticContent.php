@@ -8,9 +8,9 @@ class StaticContent extends Model
 {
   const FASES = [
     'requisicion'=>[
-      'name'=>'Detalles de la Comisión',
+      'name'=>'Requisicion',
       'tipo'=>'container',
-      'type'=>['nacional','internacional'],
+      'type'=>['prensa','radio', 'television', 'revista', 'internet', 'monitoreo', 'spot', 'filmacion', 'eventosJG', 'cineminuto'],
       'upload'=>true,
       'data'=>[
         'nomComision'=>[
@@ -50,510 +50,553 @@ class StaticContent extends Model
         ]
       ]
     ],
-    'registroPersonalNacional'=>[
-      'name'=> 'Registro de Personal Comisionado',
-      'array'=>true,
-      'type' => ['nacional'],
-      'addItemLabel'=>'Comisionados Nacionales',
-      'tableDisplay'=>'comisionados.nombres.paterno.materno',
-      'data' => [
-        'genero'=>[
-          'nombre'=>'Genero',
-          'tipo'=>'select',
-          'src'=>[
-            'tipo'=>'static',
-            'id'=>'descripcion'
-          ],
-          'datos'=>['Masculino','Femenino'],
+    'invitacion'=>[
+      'name'=>'Invitacion',
+      'tipo'=>'container',
+      'type'=>['prensa','radio', 'television', 'revista', 'internet', 'monitoreo', 'spot', 'filmacion', 'eventosJG', 'cineminuto'],
+      'upload'=>true,
+      'data'=>[
+        'nomComision'=>[
+          'encabezado'=>'Datos',
+          'nombre'=>'Nombre de la Comisión',
+          'tipo'=>'string',
+          'long'=>200,
+          'requerido'=>true
+        ],
+        'orgEvento'=>[
+          'nombre'=>'Organizador del Evento',
+          'tipo'=>'string',
           'long'=>100,
           'requerido'=>true
         ],
-        'nombres'=>[
-          'nombre'=>'Nombre(s)',
-          'tipo'=>'string',
-          'long'=>200,
-          'requerido'=>true
-        ],
-        'paterno'=>[
-          'nombre'=>'Apellido paterno',
-          'tipo'=>'string',
-          'long'=>200,
-          'requerido'=>true
-        ],
-        'materno'=>[
-          'nombre'=>'Apellido materno',
-          'tipo'=>'string',
-          'long'=>200,
-          'requerido'=>true
-        ],
-        'mail'=>[
-          'nombre'=>'Correo electrónico (de preferencia correo institucional)',
-          'tipo'=>'mail',
-          'long'=>200,
-          'requerido'=>true
-        ],
-        'tipoIntegrante'=>[
-          'nombre'=>'Tipo de integrante del sujeto obligado',
-          'tipo'=>'select',
-          'src'=>[
-            'tipo'=>'static',
-            'id'=>'descripcion'
-          ],
-          'datos'=>['Confianza', 'Honorarios', 'Otro'],
-          'long'=>100,
-          'requerido'=>false
-        ],        
-        'numeroEmpleado'=>[
-          'nombre'=>'Número de empleado',
-          'tipo'=>'number',
-          'long'=>10,
-          'minLong'=>4,
-          'requerido'=>false
-        ],
-        'denominacionCargo'=>[
-          'nombre'=>'Denominación del cargo (De conformidad con el nombramiento otorgado)',
-          'tipo'=>'string',
+        'link'=>[
+          'nombre'=>'Link del Evento (opcional)',
+          'tipo'=>'url',
           'long'=>200,
           'requerido'=>false
         ],
-        'nivelPuesto'=>[
-          'nombre'=>'Nivel de puesto (Nomenclatura numérica)',
-          'tipo'=>'number',
-          'long'=>200,
-          'requerido'=>false
-        ],
-        'areaAdscripcion'=>[
-          'nombre'=>'Area de Adscripción o Unidad Administrativa',
-          'tipo'=>'string',
-          'long'=>400,
-          'requerido'=>true
-        ],
-        'objetivoComisionado'=>[
-          'nombre'=>'Objetivo del comisionado',
+        'motivo'=>[
+          'nombre'=>'Motivo de la Comisión',
           'tipo'=>'textarea',
-          'long'=>1500,
-          'requerido'=>false
+          'long'=>1600,
+          'requerido'=>true
         ],
-        'actividadesRealizar'=>[
-          'nombre'=>'Actividades a realizar',
-          'tipo'=>'textarea',
-          'long'=>1500,
-          'requerido'=>false
-        ],
-        'viajeViaticos'=>[
-          'nombre'=>'Financiado',
-          'tipo'=>'select',
-          'src'=>[
-            'tipo'=>'static',
-            'id'=>'descripcion'
-          ],
-          'datos'=>['No','Parcial sólo Pasajes','Parcial sólo Viáticos','Parcial Viáticos y Pasajes','Total'],
+        'documents'=>[
+          'nombre'=>'Sección de documentos',
+          'tipo'=>'upload',
           'long'=>100,
-          'requerido'=>false
-        ],
-        'pasajes'=>[
-          'nombre' => 'pasajes',
-          'tipo'=>'container',
-          'long'=>100,
-          'requerido'=>false,
-          'unico'=>false,
-          'th'=>[
-            'Pasajes (De acuerdo a la partida que corresponda)',
-            'Ingrese monto de pasajes'
-          ],
-          'encabezado'=>'Monto de Pasajes',
-          'detalle'=>[
-            'pasajesPartida'=>[
-              'nombre'=>'Pasajes',
-              'tipo'=>'select',
-              'src'=>[
-                'tipo'=>'static',
-                'id'=>'descripcion'
-              ],
-              'datos'=>['3711 - Pasajes aéreos nacionales', '3721 - Pasajes terrestres nacionales', '3722 - Pasajes terrestres al interior del Distrito Federal', '3723 - Traslado terrestre de personas'],
-              'long'=>100,
-              'requerido'=>false
-            ],
-            'montoPasajes'=>[
-              'tipo'=>'double',
-              'long'=>100,
-              'requerido'=>true
-            ] 
-          ]
-        ],
-        'viaticos'=>[
-          'nombre' => 'viaticos',
-          'tipo'=>'container',
-          'long'=>100,
-          'requerido'=>false,
-          'unico'=>false,
-          'th'=>[
-            'Pasajes (De acuerdo a la partida que corresponda)',
-            'Ingrese monto de viáticos'
-          ],
-          'encabezado'=>'Monto de Viáticos',
-          'detalle'=>[
-            'viaticosPartida'=>[
-              'nombre'=>'Viáticos',
-              'tipo'=>'select',
-              'src'=>[
-                'tipo'=>'static',
-                'id'=>'descripcion'
-              ],
-              'datos'=>['3751 - Viáticos en el país', '3781 - Servicios integrales de traslado y viáticos', '3791 - Otros servicios de traslado y hospedaje'],
-              'long'=>100,
-              'requerido'=>false
-            ],
-            'montoViaticos'=>[
-              'tipo'=>'double',
-              'long'=>100,
-              'requerido'=>true
-            ] 
-          ]
-        ],        
-        'descripcionViatico'=>[
-          'nombre'=>'Descripcion de Viáticos',
-          'tipo'=>'textarea',
-          'long'=>1500,
-          'requerido'=>false
-        ],
-        'idaVuelta'=>[
-          'nombre'=>'Ida y Vuelta',
-          'tipo'=>'select',
-          'src'=>[
-            'tipo'=>'static',
-            'id'=>'descripcion'
-          ],
-          'datos'=>['Si','No'],
-          'long'=>100,
-          'requerido'=>false
-        ],
-        'saliendoEstadoNacional'=>[
-          'nombre'=>'Saliendo de (Estado)',
-          'tipo'=>'select',
-           'src'=>[
-            'tipo'=>'static',
-            'id'=>'saliendoEstadoNacional'
-          ],
-          'datos'=>[],
-          'long'=>100,
-          'requerido'=>false
-        ],
-        'saliendoMunicipioNacional'=>[
-          'nombre'=>'Saliendo de (Municipio)',
-          'tipo'=>'select',
-           'src'=>[
-            'tipo'=>'static',
-            'id'=>'saliendoMunicipioNacional'
-          ],
-          'datos'=>[],
-          'long'=>100,
-          'requerido'=>false
-        ],            
-        'llegandoEstadoNacional'=>[
-          'nombre'=>'Llegando a (Estado)',
-          'tipo'=>'select',
-           'src'=>[
-            'tipo'=>'static',
-            'id'=>'llegandoEstadoNacional'
-          ],
-          'datos'=>[],
-          'long'=>100,
-          'requerido'=>false
-        ],            
-        'llegandoMunicipioNacional'=>[
-          'nombre'=>'Llegando a (Municipio)',
-          'tipo'=>'select',
-           'src'=>[
-            'tipo'=>'static',
-            'id'=>'llegandoMunicipioNacional'
-          ],
-          'datos'=>[],
-          'long'=>100,
-          'requerido'=>false
-        ],
-        'dateSalida'=>[
-          'nombre'=>'Fecha de salida',
-          'tipo'=>'date',
-          'long'=>1500,
-          'format'=>'c',
           'requerido'=>true,
-          'requiereAlmacenar'=>'_dateSalida'
-        ],
-        'dateRegreso'=>[
-          'nombre'=>'Fecha de regreso',
-          'tipo'=>'date',
-          'long'=>1500,
-          'format'=>'c',
-          'requerido'=>true,
-          'requiereValidar'=>'_dateSalida'
+          'th'=>[
+            'Título del documento',
+            'Nombre del documento',
+          ],
         ]
       ]
-    ],    
-    'registroPersonalInternacional'=>[
-      'name'=>'Registro de Personal Comisionado',
-      'array'=>true,
-      'type' => ['internacional'],
-      'addItemLabel'=>'Comisionados Internacionales',
-      'tableDisplay'=>'comisionados.nombres.paterno.materno',
-      'data' => [
-        'genero'=>[
-          'nombre'=>'Género',
-          'tipo'=>'select',
-          'src'=>[
-            'tipo'=>'static',
-            'id'=>'descripcion'
-          ],
-          'datos'=>['Masculino','Femenino'],
-          'long'=>100,
-          'requerido'=>true
-        ],
-        'nombres'=>[
-          'nombre'=>'Nombre(s)',
-          'tipo'=>'string',
-          'long'=>200,
-          'requerido'=>true
-        ],
-        'paterno'=>[
-          'nombre'=>'Apellido paterno',
-          'tipo'=>'string',
-          'long'=>200,
-          'requerido'=>true
-        ],
-        'materno'=>[
-          'nombre'=>'Apellido materno',
-          'tipo'=>'string',
-          'long'=>200,
-          'requerido'=>true
-        ],
-        'mail'=>[
-          'nombre'=>'Correo electrónico (de preferencia correo institucional)',
-          'tipo'=>'mail',
-          'long'=>200,
-          'requerido'=>true
-        ],
-        'tipoIntegrante'=>[
-          'nombre'=>'Tipo de integrante del sujeto obligado',
-          'tipo'=>'select',
-          'src'=>[
-            'tipo'=>'static',
-            'id'=>'descripcion'
-          ],
-          'datos'=>['Confianza', 'Honorarios', 'Otro'],
-          'long'=>100,
-          'requerido'=>false
-        ],        
-        'numeroEmpleado'=>[
-          'nombre'=>'Número de empleado',
-          'tipo'=>'number',
-          'long'=>10,
-          'minLong'=>4,
-          'requerido'=>false
-        ],
-        'denominacionCargo'=>[
-          'nombre'=>'Denominación del cargo (De conformidad con el nombramiento otorgado)',
-          'tipo'=>'string',
-          'long'=>200,
-          'requerido'=>false
-        ],
-        'nivelPuesto'=>[
-          'nombre'=>'Nivel de puesto (Nomenclatura numérica)',
-          'tipo'=>'number',
-          'long'=>200,
-          'requerido'=>false
-        ],
-        'areaAdscripcion'=>[
-          'nombre'=>'Area de Adscripción o Unidad Administrativa',
-          'tipo'=>'string',
-          'long'=>400,
-          'requerido'=>true
-        ],
-        'objetivoComisionado'=>[
-          'nombre'=>'Objetivo del comisionado',
-          'tipo'=>'textarea',
-          'long'=>1500,
-          'requerido'=>false
-        ],
-        'actividadesRealizar'=>[
-          'nombre'=>'Actividades a realizar',
-          'tipo'=>'textarea',
-          'long'=>1500,
-          'requerido'=>false
-        ],
-        'viajeViaticos'=>[
-          'nombre'=>'Financiado',
-          'tipo'=>'select',
-          'src'=>[
-            'tipo'=>'static',
-            'id'=>'descripcion'
-          ],
-          'datos'=>['No','Parcial sólo Pasajes','Parcial sólo Viáticos','Parcial Viáticos y Pasajes','Total'],
-          'long'=>100,
-          'requerido'=>false
-        ],
-        'pasajes'=>[
-          'nombre' => 'pasajes',
-          'tipo'=>'container',
-          'long'=>100,
-          'requerido'=>false,
-          'unico'=>false,
-          'th'=>[
-            'Pasajes (De acuerdo a la partida que corresponda)',
-            'Ingrese monto de pasajes'
-          ],
-          'encabezado'=>'Monto de Pasajes',
-          'detalle'=>[
-            'pasajesPartida'=>[
-              'nombre'=>'Pasajes',
-              'tipo'=>'select',
-              'src'=>[
-                'tipo'=>'static',
-                'id'=>'descripcion'
-              ],
-              'datos'=>['3711 - Pasajes aéreos nacionales', '3712 - Pasajes aéreos internacionales', '3721 - Pasajes terrestres nacionales', '3722 - Pasajes terrestres al interior del Distrito Federal', '3723 - Traslado terrestre de personas', '3724 - Pasajes terrestres internacionales'],
-              'long'=>100,
-              'requerido'=>false
-            ],
-            'montoPasajes'=>[
-              'tipo'=>'double',
-              'long'=>100,
-              'requerido'=>true
-            ] 
-          ]
-        ],
-        'viaticos'=>[
-          'nombre' => 'viaticos',
-          'tipo'=>'container',
-          'long'=>100,
-          'requerido'=>false,
-          'unico'=>false,
-          'th'=>[
-            'Pasajes (De acuerdo a la partida que corresponda)',
-            'Ingrese monto de viáticos'
-          ],
-          'encabezado'=>'Monto de Viáticos',
-          'detalle'=>[
-            'viaticosPartida'=>[
-              'nombre'=>'Viáticos',
-              'tipo'=>'select',
-              'src'=>[
-                'tipo'=>'static',
-                'id'=>'descripcion'
-              ],
-              'datos'=>['3751 - Viáticos en el país', '3761 - Viáticos en el extranjero', '3781 - Servicios integrales de traslado y viáticos', '3791 - Otros servicios de traslado y hospedaje'],
-              'long'=>100,
-              'requerido'=>false
-            ],
-            'montoViaticos'=>[
-              'tipo'=>'double',
-              'long'=>100,
-              'requerido'=>true
-            ] 
-          ]
-        ],        
-        'descripcionViatico'=>[
-          'nombre'=>'Descripcion de Viáticos',
-          'tipo'=>'textarea',
-          'long'=>1500,
-          'requerido'=>false
-        ],
-        'idaVuelta'=>[
-          'nombre'=>'Ida y Vuelta',
-          'tipo'=>'select',
-          'src'=>[
-            'tipo'=>'static',
-            'id'=>'descripcion'
-          ],
-          'datos'=>['Si','No'],
-          'long'=>100,
-          'requerido'=>false
-        ],
-        'saliendoContinenteInternacional'=>[
-          'nombre'=>'Saliendo de (Continente)',
-          'tipo'=>'select',
-          'src'=>[
-            'tipo'=>'static',
-            'id'=>'descripcion'
-          ],
-          // 'datos'=>['América', 'África', 'Asia', 'Europa', 'Oceanía'],
-          'datos'=>['América', 'África', 'Asia', 'Europa'],
-          'long'=>100,
-          'requerido'=>false
-        ],
-        'saliendoPaisInternacional'=>[
-          'nombre'=>'Saliendo de (País)',
-          'tipo'=>'select',
-           'src'=>[
-            'tipo'=>'static',
-            'id'=>'saliendoPaisInternacional'
-          ],
-          'datos'=>[],
-          'long'=>100,
-          'requerido'=>false
-        ],
-        'saliendoEntidadInternacional'=>[
-          'nombre'=>'Saliendo de (Ciudad)',
-          'tipo'=>'select',
-           'src'=>[
-            'tipo'=>'static',
-            'id'=>'saliendoEntidadInternacional'
-          ],
-          'datos'=>[],
-          'long'=>100,
-          'requerido'=>false
-        ],
-        'llegandoContinenteInternacional'=>[
-          'nombre'=>'Llegando a (Continente)',
-          'tipo'=>'select',
-          'src'=>[
-            'tipo'=>'static',
-            'id'=>'descripcion'
-          ],
-          // 'datos'=>['América', 'África', 'Asia', 'Europa', 'Oceanía'],          
-          'datos'=>['América', 'África', 'Asia', 'Europa'],
-          'long'=>100,
-          'requerido'=>false
-        ],               
-        'llegandoPaisInternacional'=>[
-          'nombre'=>'Llegando a (País)',
-          'tipo'=>'select',
-          'src'=>[
-            'tipo'=>'static',
-            'id'=>'descripcion'
-          ],
-          'datos'=>[],
-          'long'=>100,
-          'requerido'=>false
-        ],            
-        'llegandoEntidadInternacional'=>[
-          'nombre'=>'Llegando a (Ciudad)',
-          'tipo'=>'select',
-           'src'=>[
-            'tipo'=>'static',
-            'id'=>'descripcion'
-          ],
-          'datos'=>[],
-          'long'=>100,
-          'requerido'=>false
-        ],
-        'dateSalida'=>[
-          'nombre'=>'Fecha de salida',
-          'tipo'=>'date',
-          'long'=>1500,
-          'format'=>'c',
-          'requerido'=>true,
-          'requiereAlmacenar'=>'_dateSalida'
-        ],
-        'dateRegreso'=>[
-          'nombre'=>'Fecha de regreso',
-          'tipo'=>'date',
-          'long'=>1500,
-          'format'=>'c',
-          'requerido'=>true,
-          'requiereValidar'=>'_dateSalida'
-        ]
-      ]
-    ]    
+    ]
+    // 'registroPersonalNacional'=>[
+    //   'name'=> 'Registro de Personal Comisionado',
+    //   'array'=>true,
+    //   'type' => ['nacional'],
+    //   'addItemLabel'=>'Comisionados Nacionales',
+    //   'tableDisplay'=>'comisionados.nombres.paterno.materno',
+    //   'data' => [
+    //     'genero'=>[
+    //       'nombre'=>'Genero',
+    //       'tipo'=>'select',
+    //       'src'=>[
+    //         'tipo'=>'static',
+    //         'id'=>'descripcion'
+    //       ],
+    //       'datos'=>['Masculino','Femenino'],
+    //       'long'=>100,
+    //       'requerido'=>true
+    //     ],
+    //     'nombres'=>[
+    //       'nombre'=>'Nombre(s)',
+    //       'tipo'=>'string',
+    //       'long'=>200,
+    //       'requerido'=>true
+    //     ],
+    //     'paterno'=>[
+    //       'nombre'=>'Apellido paterno',
+    //       'tipo'=>'string',
+    //       'long'=>200,
+    //       'requerido'=>true
+    //     ],
+    //     'materno'=>[
+    //       'nombre'=>'Apellido materno',
+    //       'tipo'=>'string',
+    //       'long'=>200,
+    //       'requerido'=>true
+    //     ],
+    //     'mail'=>[
+    //       'nombre'=>'Correo electrónico (de preferencia correo institucional)',
+    //       'tipo'=>'mail',
+    //       'long'=>200,
+    //       'requerido'=>true
+    //     ],
+    //     'tipoIntegrante'=>[
+    //       'nombre'=>'Tipo de integrante del sujeto obligado',
+    //       'tipo'=>'select',
+    //       'src'=>[
+    //         'tipo'=>'static',
+    //         'id'=>'descripcion'
+    //       ],
+    //       'datos'=>['Confianza', 'Honorarios', 'Otro'],
+    //       'long'=>100,
+    //       'requerido'=>false
+    //     ],        
+    //     'numeroEmpleado'=>[
+    //       'nombre'=>'Número de empleado',
+    //       'tipo'=>'number',
+    //       'long'=>10,
+    //       'minLong'=>4,
+    //       'requerido'=>false
+    //     ],
+    //     'denominacionCargo'=>[
+    //       'nombre'=>'Denominación del cargo (De conformidad con el nombramiento otorgado)',
+    //       'tipo'=>'string',
+    //       'long'=>200,
+    //       'requerido'=>false
+    //     ],
+    //     'nivelPuesto'=>[
+    //       'nombre'=>'Nivel de puesto (Nomenclatura numérica)',
+    //       'tipo'=>'number',
+    //       'long'=>200,
+    //       'requerido'=>false
+    //     ],
+    //     'areaAdscripcion'=>[
+    //       'nombre'=>'Area de Adscripción o Unidad Administrativa',
+    //       'tipo'=>'string',
+    //       'long'=>400,
+    //       'requerido'=>true
+    //     ],
+    //     'objetivoComisionado'=>[
+    //       'nombre'=>'Objetivo del comisionado',
+    //       'tipo'=>'textarea',
+    //       'long'=>1500,
+    //       'requerido'=>false
+    //     ],
+    //     'actividadesRealizar'=>[
+    //       'nombre'=>'Actividades a realizar',
+    //       'tipo'=>'textarea',
+    //       'long'=>1500,
+    //       'requerido'=>false
+    //     ],
+    //     'viajeViaticos'=>[
+    //       'nombre'=>'Financiado',
+    //       'tipo'=>'select',
+    //       'src'=>[
+    //         'tipo'=>'static',
+    //         'id'=>'descripcion'
+    //       ],
+    //       'datos'=>['No','Parcial sólo Pasajes','Parcial sólo Viáticos','Parcial Viáticos y Pasajes','Total'],
+    //       'long'=>100,
+    //       'requerido'=>false
+    //     ],
+    //     'pasajes'=>[
+    //       'nombre' => 'pasajes',
+    //       'tipo'=>'container',
+    //       'long'=>100,
+    //       'requerido'=>false,
+    //       'unico'=>false,
+    //       'th'=>[
+    //         'Pasajes (De acuerdo a la partida que corresponda)',
+    //         'Ingrese monto de pasajes'
+    //       ],
+    //       'encabezado'=>'Monto de Pasajes',
+    //       'detalle'=>[
+    //         'pasajesPartida'=>[
+    //           'nombre'=>'Pasajes',
+    //           'tipo'=>'select',
+    //           'src'=>[
+    //             'tipo'=>'static',
+    //             'id'=>'descripcion'
+    //           ],
+    //           'datos'=>['3711 - Pasajes aéreos nacionales', '3721 - Pasajes terrestres nacionales', '3722 - Pasajes terrestres al interior del Distrito Federal', '3723 - Traslado terrestre de personas'],
+    //           'long'=>100,
+    //           'requerido'=>false
+    //         ],
+    //         'montoPasajes'=>[
+    //           'tipo'=>'double',
+    //           'long'=>100,
+    //           'requerido'=>true
+    //         ] 
+    //       ]
+    //     ],
+    //     'viaticos'=>[
+    //       'nombre' => 'viaticos',
+    //       'tipo'=>'container',
+    //       'long'=>100,
+    //       'requerido'=>false,
+    //       'unico'=>false,
+    //       'th'=>[
+    //         'Pasajes (De acuerdo a la partida que corresponda)',
+    //         'Ingrese monto de viáticos'
+    //       ],
+    //       'encabezado'=>'Monto de Viáticos',
+    //       'detalle'=>[
+    //         'viaticosPartida'=>[
+    //           'nombre'=>'Viáticos',
+    //           'tipo'=>'select',
+    //           'src'=>[
+    //             'tipo'=>'static',
+    //             'id'=>'descripcion'
+    //           ],
+    //           'datos'=>['3751 - Viáticos en el país', '3781 - Servicios integrales de traslado y viáticos', '3791 - Otros servicios de traslado y hospedaje'],
+    //           'long'=>100,
+    //           'requerido'=>false
+    //         ],
+    //         'montoViaticos'=>[
+    //           'tipo'=>'double',
+    //           'long'=>100,
+    //           'requerido'=>true
+    //         ] 
+    //       ]
+    //     ],        
+    //     'descripcionViatico'=>[
+    //       'nombre'=>'Descripcion de Viáticos',
+    //       'tipo'=>'textarea',
+    //       'long'=>1500,
+    //       'requerido'=>false
+    //     ],
+    //     'idaVuelta'=>[
+    //       'nombre'=>'Ida y Vuelta',
+    //       'tipo'=>'select',
+    //       'src'=>[
+    //         'tipo'=>'static',
+    //         'id'=>'descripcion'
+    //       ],
+    //       'datos'=>['Si','No'],
+    //       'long'=>100,
+    //       'requerido'=>false
+    //     ],
+    //     'saliendoEstadoNacional'=>[
+    //       'nombre'=>'Saliendo de (Estado)',
+    //       'tipo'=>'select',
+    //        'src'=>[
+    //         'tipo'=>'static',
+    //         'id'=>'saliendoEstadoNacional'
+    //       ],
+    //       'datos'=>[],
+    //       'long'=>100,
+    //       'requerido'=>false
+    //     ],
+    //     'saliendoMunicipioNacional'=>[
+    //       'nombre'=>'Saliendo de (Municipio)',
+    //       'tipo'=>'select',
+    //        'src'=>[
+    //         'tipo'=>'static',
+    //         'id'=>'saliendoMunicipioNacional'
+    //       ],
+    //       'datos'=>[],
+    //       'long'=>100,
+    //       'requerido'=>false
+    //     ],            
+    //     'llegandoEstadoNacional'=>[
+    //       'nombre'=>'Llegando a (Estado)',
+    //       'tipo'=>'select',
+    //        'src'=>[
+    //         'tipo'=>'static',
+    //         'id'=>'llegandoEstadoNacional'
+    //       ],
+    //       'datos'=>[],
+    //       'long'=>100,
+    //       'requerido'=>false
+    //     ],            
+    //     'llegandoMunicipioNacional'=>[
+    //       'nombre'=>'Llegando a (Municipio)',
+    //       'tipo'=>'select',
+    //        'src'=>[
+    //         'tipo'=>'static',
+    //         'id'=>'llegandoMunicipioNacional'
+    //       ],
+    //       'datos'=>[],
+    //       'long'=>100,
+    //       'requerido'=>false
+    //     ],
+    //     'dateSalida'=>[
+    //       'nombre'=>'Fecha de salida',
+    //       'tipo'=>'date',
+    //       'long'=>1500,
+    //       'format'=>'c',
+    //       'requerido'=>true,
+    //       'requiereAlmacenar'=>'_dateSalida'
+    //     ],
+    //     'dateRegreso'=>[
+    //       'nombre'=>'Fecha de regreso',
+    //       'tipo'=>'date',
+    //       'long'=>1500,
+    //       'format'=>'c',
+    //       'requerido'=>true,
+    //       'requiereValidar'=>'_dateSalida'
+    //     ]
+    //   ]
+    // ],    
+    // 'registroPersonalInternacional'=>[
+    //   'name'=>'Registro de Personal Comisionado',
+    //   'array'=>true,
+    //   'type' => ['internacional'],
+    //   'addItemLabel'=>'Comisionados Internacionales',
+    //   'tableDisplay'=>'comisionados.nombres.paterno.materno',
+    //   'data' => [
+    //     'genero'=>[
+    //       'nombre'=>'Género',
+    //       'tipo'=>'select',
+    //       'src'=>[
+    //         'tipo'=>'static',
+    //         'id'=>'descripcion'
+    //       ],
+    //       'datos'=>['Masculino','Femenino'],
+    //       'long'=>100,
+    //       'requerido'=>true
+    //     ],
+    //     'nombres'=>[
+    //       'nombre'=>'Nombre(s)',
+    //       'tipo'=>'string',
+    //       'long'=>200,
+    //       'requerido'=>true
+    //     ],
+    //     'paterno'=>[
+    //       'nombre'=>'Apellido paterno',
+    //       'tipo'=>'string',
+    //       'long'=>200,
+    //       'requerido'=>true
+    //     ],
+    //     'materno'=>[
+    //       'nombre'=>'Apellido materno',
+    //       'tipo'=>'string',
+    //       'long'=>200,
+    //       'requerido'=>true
+    //     ],
+    //     'mail'=>[
+    //       'nombre'=>'Correo electrónico (de preferencia correo institucional)',
+    //       'tipo'=>'mail',
+    //       'long'=>200,
+    //       'requerido'=>true
+    //     ],
+    //     'tipoIntegrante'=>[
+    //       'nombre'=>'Tipo de integrante del sujeto obligado',
+    //       'tipo'=>'select',
+    //       'src'=>[
+    //         'tipo'=>'static',
+    //         'id'=>'descripcion'
+    //       ],
+    //       'datos'=>['Confianza', 'Honorarios', 'Otro'],
+    //       'long'=>100,
+    //       'requerido'=>false
+    //     ],        
+    //     'numeroEmpleado'=>[
+    //       'nombre'=>'Número de empleado',
+    //       'tipo'=>'number',
+    //       'long'=>10,
+    //       'minLong'=>4,
+    //       'requerido'=>false
+    //     ],
+    //     'denominacionCargo'=>[
+    //       'nombre'=>'Denominación del cargo (De conformidad con el nombramiento otorgado)',
+    //       'tipo'=>'string',
+    //       'long'=>200,
+    //       'requerido'=>false
+    //     ],
+    //     'nivelPuesto'=>[
+    //       'nombre'=>'Nivel de puesto (Nomenclatura numérica)',
+    //       'tipo'=>'number',
+    //       'long'=>200,
+    //       'requerido'=>false
+    //     ],
+    //     'areaAdscripcion'=>[
+    //       'nombre'=>'Area de Adscripción o Unidad Administrativa',
+    //       'tipo'=>'string',
+    //       'long'=>400,
+    //       'requerido'=>true
+    //     ],
+    //     'objetivoComisionado'=>[
+    //       'nombre'=>'Objetivo del comisionado',
+    //       'tipo'=>'textarea',
+    //       'long'=>1500,
+    //       'requerido'=>false
+    //     ],
+    //     'actividadesRealizar'=>[
+    //       'nombre'=>'Actividades a realizar',
+    //       'tipo'=>'textarea',
+    //       'long'=>1500,
+    //       'requerido'=>false
+    //     ],
+    //     'viajeViaticos'=>[
+    //       'nombre'=>'Financiado',
+    //       'tipo'=>'select',
+    //       'src'=>[
+    //         'tipo'=>'static',
+    //         'id'=>'descripcion'
+    //       ],
+    //       'datos'=>['No','Parcial sólo Pasajes','Parcial sólo Viáticos','Parcial Viáticos y Pasajes','Total'],
+    //       'long'=>100,
+    //       'requerido'=>false
+    //     ],
+    //     'pasajes'=>[
+    //       'nombre' => 'pasajes',
+    //       'tipo'=>'container',
+    //       'long'=>100,
+    //       'requerido'=>false,
+    //       'unico'=>false,
+    //       'th'=>[
+    //         'Pasajes (De acuerdo a la partida que corresponda)',
+    //         'Ingrese monto de pasajes'
+    //       ],
+    //       'encabezado'=>'Monto de Pasajes',
+    //       'detalle'=>[
+    //         'pasajesPartida'=>[
+    //           'nombre'=>'Pasajes',
+    //           'tipo'=>'select',
+    //           'src'=>[
+    //             'tipo'=>'static',
+    //             'id'=>'descripcion'
+    //           ],
+    //           'datos'=>['3711 - Pasajes aéreos nacionales', '3712 - Pasajes aéreos internacionales', '3721 - Pasajes terrestres nacionales', '3722 - Pasajes terrestres al interior del Distrito Federal', '3723 - Traslado terrestre de personas', '3724 - Pasajes terrestres internacionales'],
+    //           'long'=>100,
+    //           'requerido'=>false
+    //         ],
+    //         'montoPasajes'=>[
+    //           'tipo'=>'double',
+    //           'long'=>100,
+    //           'requerido'=>true
+    //         ] 
+    //       ]
+    //     ],
+    //     'viaticos'=>[
+    //       'nombre' => 'viaticos',
+    //       'tipo'=>'container',
+    //       'long'=>100,
+    //       'requerido'=>false,
+    //       'unico'=>false,
+    //       'th'=>[
+    //         'Pasajes (De acuerdo a la partida que corresponda)',
+    //         'Ingrese monto de viáticos'
+    //       ],
+    //       'encabezado'=>'Monto de Viáticos',
+    //       'detalle'=>[
+    //         'viaticosPartida'=>[
+    //           'nombre'=>'Viáticos',
+    //           'tipo'=>'select',
+    //           'src'=>[
+    //             'tipo'=>'static',
+    //             'id'=>'descripcion'
+    //           ],
+    //           'datos'=>['3751 - Viáticos en el país', '3761 - Viáticos en el extranjero', '3781 - Servicios integrales de traslado y viáticos', '3791 - Otros servicios de traslado y hospedaje'],
+    //           'long'=>100,
+    //           'requerido'=>false
+    //         ],
+    //         'montoViaticos'=>[
+    //           'tipo'=>'double',
+    //           'long'=>100,
+    //           'requerido'=>true
+    //         ] 
+    //       ]
+    //     ],        
+    //     'descripcionViatico'=>[
+    //       'nombre'=>'Descripcion de Viáticos',
+    //       'tipo'=>'textarea',
+    //       'long'=>1500,
+    //       'requerido'=>false
+    //     ],
+    //     'idaVuelta'=>[
+    //       'nombre'=>'Ida y Vuelta',
+    //       'tipo'=>'select',
+    //       'src'=>[
+    //         'tipo'=>'static',
+    //         'id'=>'descripcion'
+    //       ],
+    //       'datos'=>['Si','No'],
+    //       'long'=>100,
+    //       'requerido'=>false
+    //     ],
+    //     'saliendoContinenteInternacional'=>[
+    //       'nombre'=>'Saliendo de (Continente)',
+    //       'tipo'=>'select',
+    //       'src'=>[
+    //         'tipo'=>'static',
+    //         'id'=>'descripcion'
+    //       ],
+    //       // 'datos'=>['América', 'África', 'Asia', 'Europa', 'Oceanía'],
+    //       'datos'=>['América', 'África', 'Asia', 'Europa'],
+    //       'long'=>100,
+    //       'requerido'=>false
+    //     ],
+    //     'saliendoPaisInternacional'=>[
+    //       'nombre'=>'Saliendo de (País)',
+    //       'tipo'=>'select',
+    //        'src'=>[
+    //         'tipo'=>'static',
+    //         'id'=>'saliendoPaisInternacional'
+    //       ],
+    //       'datos'=>[],
+    //       'long'=>100,
+    //       'requerido'=>false
+    //     ],
+    //     'saliendoEntidadInternacional'=>[
+    //       'nombre'=>'Saliendo de (Ciudad)',
+    //       'tipo'=>'select',
+    //        'src'=>[
+    //         'tipo'=>'static',
+    //         'id'=>'saliendoEntidadInternacional'
+    //       ],
+    //       'datos'=>[],
+    //       'long'=>100,
+    //       'requerido'=>false
+    //     ],
+    //     'llegandoContinenteInternacional'=>[
+    //       'nombre'=>'Llegando a (Continente)',
+    //       'tipo'=>'select',
+    //       'src'=>[
+    //         'tipo'=>'static',
+    //         'id'=>'descripcion'
+    //       ],
+    //       // 'datos'=>['América', 'África', 'Asia', 'Europa', 'Oceanía'],          
+    //       'datos'=>['América', 'África', 'Asia', 'Europa'],
+    //       'long'=>100,
+    //       'requerido'=>false
+    //     ],               
+    //     'llegandoPaisInternacional'=>[
+    //       'nombre'=>'Llegando a (País)',
+    //       'tipo'=>'select',
+    //       'src'=>[
+    //         'tipo'=>'static',
+    //         'id'=>'descripcion'
+    //       ],
+    //       'datos'=>[],
+    //       'long'=>100,
+    //       'requerido'=>false
+    //     ],            
+    //     'llegandoEntidadInternacional'=>[
+    //       'nombre'=>'Llegando a (Ciudad)',
+    //       'tipo'=>'select',
+    //        'src'=>[
+    //         'tipo'=>'static',
+    //         'id'=>'descripcion'
+    //       ],
+    //       'datos'=>[],
+    //       'long'=>100,
+    //       'requerido'=>false
+    //     ],
+    //     'dateSalida'=>[
+    //       'nombre'=>'Fecha de salida',
+    //       'tipo'=>'date',
+    //       'long'=>1500,
+    //       'format'=>'c',
+    //       'requerido'=>true,
+    //       'requiereAlmacenar'=>'_dateSalida'
+    //     ],
+    //     'dateRegreso'=>[
+    //       'nombre'=>'Fecha de regreso',
+    //       'tipo'=>'date',
+    //       'long'=>1500,
+    //       'format'=>'c',
+    //       'requerido'=>true,
+    //       'requiereValidar'=>'_dateSalida'
+    //     ]
+    //   ]
+    // ]    
   ];
 
 

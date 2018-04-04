@@ -3,35 +3,35 @@
 
 @section('nav')
 @section('nav2')
-    @include('templates.nav2',['nav2'=> [ ['nombre'=>'&laquo; Gobierno Digital CDMX','href'=> env('APP_PLATAFORMA_PRINCIPAL')],
-                                          ['nombre'=>'Registros', 'href'=> url('/svte')],
-                                          ['nombre'=>'Registrar expediente', 'activo'=>'active'],
-                                          ['nombre'=>'Autorizadas', 'href'=> url('/autorizadas')],
-                                          ['nombre'=>'Rechazadas', 'href'=> url('/rechazadas')]
-                                        ]
-                              ]
-            )
+  @include('templates.nav2',[
+    'nav2'=> [ 
+      ['nombre'=>'&laquo; Gobierno Digital CDMX','href'=> env('APP_PLATAFORMA_PRINCIPAL')],
+      ['nombre'=>'Registros', 'href'=> url('/svte')],
+      ['nombre'=>'Registrar expediente', 'activo'=>'active'],
+      ['nombre'=>'Autorizadas', 'href'=> url('/autorizadas')],
+      ['nombre'=>'Rechazadas', 'href'=> url('/rechazadas')]
+    ]
+  ])
 @endsection
-
-@stop
 
 @section('container')
 <div class="divGeneral">
   <h2>Captura de Expedinte</h2>
-    <form id="form" accept-charset="UTF-8" method="post" action="{{ url('/nfsvte')}}" role="form">
+    <form id="form" action="{{ url('/nfsvte')}}" role="form" method="POST">
       <input type="hidden" name="_token" value="{{ csrf_token() }}">
       <div class="form-inline">
         <div class="form-group">
           <label class="col-md-2 control-label" for="tipoExp">Tipo:</label>
           <div class="col-xs-3">
-            <select class="form-control" name="tipo" id="tipoExp" required>
-              <option value="0">Tipo de expediente</option>
-              <option value="prensa">Prensa</option>
-              <option value="radio">Radio</option>
-              <option value="television">Televisión</option>
-              <option value="internet">Internet</option>
-              <option value="monimedios">Monitor de medios</option>
-              <option value="otro">Otro</option>
+            <select class="form-control" name="tipo[]" id="tipoExp" multiple required>
+              <option selected disabled value="">Selecciona el tipo de expediente</option>
+              <option value="prensa|Prensa">Prensa</option>
+              <option value="radio|Radio">Radio</option>
+              <option value="television|Televisión">Televisión</option>
+              <option value="internet|Internet">Internet</option>
+              <option value="monimedios|Monitor de medios">Monitor de medios</option>
+              <option value="revista|Revista">Revista</option>
+              <option value="otro|Otro">Otro</option>
             </select>
           </div>
         </div>
@@ -39,42 +39,38 @@
       <br>
       <div class="form-inline">
         <div class="form-group">
-          <input class="form-control" type="text" value="OM"  readonly=""  name="estandar"  placeholder="" style="width:53px;">
+          <input class="form-control" type="text" value="OM"  readonly=""  name="estandar"  placeholder="" style="width:55px;">
         </div>
         <div class="form-group">
           <h4>/</h4>
         </div>
         <div class="form-group">
-          <input class="form-control" type="text" value="CGCS"  readonly=""  name="cgcs"  placeholder="" style="width: 
-          68px;">
+          <input class="form-control" type="text" value="CGCS"  readonly=""  name="cgcs"  placeholder="" style="width:70px;">
         </div>
         <div class="form-group">
           <h4>/</h4>
         </div>
         <div class="form-group">
-          <input class="form-control" type="text" value="CPS"  readonly=""  name="cps"  placeholder="" style="width: 
-          59px;">
+          <input class="form-control" type="text" value="CPS"  readonly=""  name="cps"  placeholder="" style="width:60px;">
         </div>
         <div class="form-group">
           <h4>-</h4>
         </div>
         <div class="form-group">
-          <input class="form-control" id="folio" type="text" value="001"  readonly=""  name="folio"  placeholder="" style="width: 
-          55px;">
+          <input class="form-control" id="folio" type="text" value="001"  readonly=""  name="folio"  placeholder="" style="width:55px;">
         </div>
         <div class="form-group">
           <h4>-</h4>
         </div>
         <div class="form-group">
-          <input class="form-control" type="text" value="0"  readonly=""  name="numero" placeholder="" style="width: 
-          50px;">
+          <input class="form-control" type="text" value="0"  readonly=""  name="numero" placeholder="" style="width:55px;">
         </div>
         <div class="form-group">
           <h4>-</h4>
         </div>
         <div class="form-group">
-          <select class="form-control" name="year" id="year">
-            <option value="0">Seleccione</option>
+          <select class="form-control" name="year" id="year" required>
+            <option selected disabled value="">Selecciona un año</option>
           </select>
         </div>
       </div>
