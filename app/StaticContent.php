@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class StaticContent extends Model
 {
   const FASES = [
-    'detalleComision'=>[
+    'requisicion'=>[
       'name'=>'Detalles de la Comisión',
       'tipo'=>'container',
       'type'=>['nacional','internacional'],

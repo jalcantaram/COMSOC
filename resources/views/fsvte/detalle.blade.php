@@ -12,8 +12,8 @@
         </div>
       @endif
       @if($item['tipo'] != 'container')
-        @php ($valor = Session::get(Session::get('faseActualDatos').'.'.$key) )
-        @php ($valor = (isset($item['arrayContainer']))?$valor[0]:$valor)
+        @php ($valor = Session::get(Session::get('faseActualDatos').'.'.$key)) @endphp
+        @php ($valor = (isset($item['arrayContainer']))?$valor[0]:$valor) @endphp
         @if($item['tipo'] == 'label')
           <div class="form-group">
             <div class="col-lg-8">
@@ -34,7 +34,7 @@
               </div>
               <div class="col-lg-6">
                 @if(isset($itemID))
-                  @php ($selectID = rand(1000000000,9999999999))
+                  @php ($selectID = rand(1000000000,9999999999)) @endphp
                   <script type="text/javascript">
                     $(document).ready(function(){
                       $('#{{$itemID}}').change(function(){
@@ -622,36 +622,6 @@
         @endif
       @endif
     @endforeach    
-    @if(Session::get('faseActual') == 'detalleComision')
-      @php
-        $isdetComTit = Session::get('fase.detalleComision.observacionesTitular');
-        $isdetComDGA = Session::get('fase.detalleComision.observacionesDGA');
-      @endphp
-      @if(isset($isdetComTit))
-        <div class="form-group">
-          <div class="col-md-12">
-            <h4><strong>Observaciones del Detalle de la Comisión (Titular):</strong></h4>
-          </div>
-          <div class="col-lg-12">
-            <div class="form-group">
-              <textarea class="form-control" rows="3" name="observacionesTitular" readonly>{{ Session::get('fase.detalleComision.observacionesTitular') }}</textarea>
-            </div>
-          </div>
-        </div>
-      @endif
-      @if(isset($isdetComDGA))
-        <div class="form-group">
-          <div class="col-md-12">
-            <h4><strong>Observaciones del Detalle de la Comisión (DGA):</strong></h4>
-          </div>
-          <div class="col-lg-12">
-            <div class="form-group">
-              <textarea class="form-control" rows="3" name="observacionesDGA" readonly>{{ Session::get('fase.detalleComision.observacionesDGA') }}</textarea>
-            </div>
-          </div>
-        </div>      
-      @endif
-    @endif
     @if(!isset($item['tag']) or !$item['tag'])
       <div class="form-group">
         <div class="col-lg-2">

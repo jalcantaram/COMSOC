@@ -9,28 +9,26 @@ use Redirect;
 
 class fsvte extends Controller{
     
-  public function obtieneDatosEnlazados(Request $request){
-      \Session::reflash();
-      $data = \App\StaticContent::obtieneDefinicionFSVTE();
-      $variable = $request->v;
-      if(collect($data)->filter(function($i) use($variable){ return isset($i['bind']) && $i['bind'] == $variable; })->count()){
-          $parametros['data'] = $data[$request->v]['src']['parameters'];
-          $src = $data[$request->v]['src'];
-          $parametros['data']['valores']['eje'] = $request->i;
+  // public function obtieneDatosEnlazados(Request $request){
+  //     \Session::reflash();
+  //     $data = \App\StaticContent::obtieneDefinicionFSVTE();
+  //     $variable = $request->v;
+  //     if(collect($data)->filter(function($i) use($variable){ return isset($i['bind']) && $i['bind'] == $variable; })->count()){
+  //         $parametros['data'] = $data[$request->v]['src']['parameters'];
+  //         $src = $data[$request->v]['src'];
+  //         $parametros['data']['valores']['eje'] = $request->i;
         
-          $util = new Utilidades();
-          $retorno = $util->muleConnection($src['type'],$src['method'],$src['port'],$parametros);
-          return $retorno['data'][0][$src['campo']];
-      }
-  }
+  //         $util = new Utilidades();
+  //         $retorno = $util->muleConnection($src['type'],$src['method'],$src['port'],$parametros);
+  //         return $retorno['data'][0][$src['campo']];
+  //     }
+  // }
 
   public function obtieneFichas(){
-    \Session::reflash();
     $util = new Utilidades();
-    $retorno = $util->muleConnection('GET','/viaticos/schemaViaticos/all?token='.\Session::get('sessionId'), 10010);
-    // dd($retorno);
+    $retorno = $util->muleConnection('GET','/comsoc/schemaExpediente/all?sessionId='.\Session::get('sessionId'), 10017);
     if($retorno['error']['code']==0){
-      if (\Session::get('user.roles')->contains('Viatinet_Operativo')) {
+      if (\Session::get('user.roles')->contains('Comsoc_operativo')) {
        return $retorno['data'] = collect($retorno['data'])->filter(function($v, $k){
           return $v['status'] == 'captura' || $v['status'] == 'firmaTitular' || $v['status'] == 'firmaDGA';
        }); 
@@ -48,68 +46,68 @@ class fsvte extends Controller{
     }      
   }
 
-  public function obtieneFichasRechazadas(){
-    \Session::reflash();    
-    $util = new Utilidades();
-    $retorno = $util->muleConnection('GET','/viaticos/schemaViaticos/all?token='.\Session::get('sessionId'), 10010);
-    if($retorno['error']['code']==0){
-      if (\Session::get('user.roles')->contains('Viatinet_Operativo')) {
-       return $retorno['data'] = collect($retorno['data'])->filter(function($v, $k){
-          return $v['status'] == 'rechazadoTitular' || $v['status'] == 'rechazadoDGA';
-       }); 
-      }elseif (\Session::get('user.roles')->contains('Viatinet_Titular') || (\Session::get('user.roles')->contains('Viatinet_supTitular'))) {
-        return $retorno['data'] = collect($retorno['data'])->filter(function($v, $k){
-          return $v['status'] == 'rechazadoTitular' || $v['status'] == 'rechazadoDGA';
-        });
-      }elseif (\Session::get('user.roles')->contains('Viatinet_Dga') || (\Session::get('user.roles')->contains('Viatinet_supDga'))) {
-        return $retorno['data'] = collect($retorno['data'])->filter(function($v, $k){
-          return $v['status'] == 'rechazadoDGA';
-        });
-      }
-    }else{
-      return $retorno['error']['msg'];
-    }      
-  }
+  // public function obtieneFichasRechazadas(){
+  //   \Session::reflash();    
+  //   $util = new Utilidades();
+  //   $retorno = $util->muleConnection('GET','/viaticos/schemaViaticos/all?token='.\Session::get('sessionId'), 10010);
+  //   if($retorno['error']['code']==0){
+  //     if (\Session::get('user.roles')->contains('Viatinet_Operativo')) {
+  //      return $retorno['data'] = collect($retorno['data'])->filter(function($v, $k){
+  //         return $v['status'] == 'rechazadoTitular' || $v['status'] == 'rechazadoDGA';
+  //      }); 
+  //     }elseif (\Session::get('user.roles')->contains('Viatinet_Titular') || (\Session::get('user.roles')->contains('Viatinet_supTitular'))) {
+  //       return $retorno['data'] = collect($retorno['data'])->filter(function($v, $k){
+  //         return $v['status'] == 'rechazadoTitular' || $v['status'] == 'rechazadoDGA';
+  //       });
+  //     }elseif (\Session::get('user.roles')->contains('Viatinet_Dga') || (\Session::get('user.roles')->contains('Viatinet_supDga'))) {
+  //       return $retorno['data'] = collect($retorno['data'])->filter(function($v, $k){
+  //         return $v['status'] == 'rechazadoDGA';
+  //       });
+  //     }
+  //   }else{
+  //     return $retorno['error']['msg'];
+  //   }      
+  // }
 
-  public function obtieneFichasAutorizadas(){
-    $util = new Utilidades();
-    $retorno = $util->muleConnection('GET','/viaticos/schemaViaticos/all?token='.\Session::get('sessionId'), 10010);
-    if($retorno['error']['code']==0){
-     return $retorno['data'] = collect($retorno['data'])->filter(function($v, $k){
-        return $v['status'] == 'Autorizado';
-     }); 
-    }else{
-      return $retorno['error']['msg'];
-    }      
-  }
+  // public function obtieneFichasAutorizadas(){
+  //   $util = new Utilidades();
+  //   $retorno = $util->muleConnection('GET','/viaticos/schemaViaticos/all?token='.\Session::get('sessionId'), 10010);
+  //   if($retorno['error']['code']==0){
+  //    return $retorno['data'] = collect($retorno['data'])->filter(function($v, $k){
+  //       return $v['status'] == 'Autorizado';
+  //    }); 
+  //   }else{
+  //     return $retorno['error']['msg'];
+  //   }      
+  // }
 
-  public function getDetail(Request $request){
-    \Session::reflash();
-    \Session::forget('_id');
-    \Session::forget('created');
-    \Session::forget('fase');
-    \Session::forget('faseActualDatos');
-    $util = new Utilidades();
-    $viatico = $request['f'];
-    $session = $request['sess'];
-    $json = $util->muleConnection('GET','/viaticos/schemaViaticos?token='.$session.'&viatico='.$viatico, 10010);
-     if($json['error']['code']==0){
-        \Session::put('_id',$json['data']['_id']);
-        \Session::put('created',$json['data']['created']);
-        unset($json['data']['created']); 
-        unset($json['data']['fase']);
-        unset($json['data']['cdmxIdCreated']);
-        unset($json['data']['activo']);
-        foreach($json['data'] as $fase=>$data){
-          \Session::put('fase.'.$fase,$data);
-        }
-        \Session::put('faseActual',$fase);
-        $datos = $json;
-        return view('fsvte.info', compact('datos'));
-    }else{
-        return redirect('/svte');
-    }
-  }
+  // public function getDetail(Request $request){
+  //   \Session::reflash();
+  //   \Session::forget('_id');
+  //   \Session::forget('created');
+  //   \Session::forget('fase');
+  //   \Session::forget('faseActualDatos');
+  //   $util = new Utilidades();
+  //   $viatico = $request['f'];
+  //   $session = $request['sess'];
+  //   $json = $util->muleConnection('GET','/viaticos/schemaViaticos?token='.$session.'&viatico='.$viatico, 10010);
+  //    if($json['error']['code']==0){
+  //       \Session::put('_id',$json['data']['_id']);
+  //       \Session::put('created',$json['data']['created']);
+  //       unset($json['data']['created']); 
+  //       unset($json['data']['fase']);
+  //       unset($json['data']['cdmxIdCreated']);
+  //       unset($json['data']['activo']);
+  //       foreach($json['data'] as $fase=>$data){
+  //         \Session::put('fase.'.$fase,$data);
+  //       }
+  //       \Session::put('faseActual',$fase);
+  //       $datos = $json;
+  //       return view('fsvte.info', compact('datos'));
+  //   }else{
+  //       return redirect('/svte');
+  //   }
+  // }
 
   public function getSecuencia(Request $request){
     if ($request->ajax()){
@@ -120,82 +118,38 @@ class fsvte extends Controller{
   }
 
   public function creaFicha(Request $request){
-    // \Session::reflash();
-    // \Session::forget('fase');
-    // \Session::forget('faseActual');
-    // \Session::forget('created');
-    // \Session::forget('_id');
-    // $request->input('anio') == 'year'
     $input = $request->input();
-    // dd($input);
-    // if ($request->input('name') == 'nacional') {
-    //   $nacional = $request->input('name');
-    //   \Session::put('nacional',$nacional);
-      $util = new Utilidades();
-      $parametros = ['security'=>[
-          'sessionId' => \Session::get('sessionId')
-        ],
-        'data'=>[
-          'name' => $input['tipo'],
-          'anio' => json_decode($input['year'])
-        ]
-      ];
-      // dd($parametros);
-      $json = $util->muleConnection('POST','/comsoc/saveSchemaExpediente', 10017,$parametros);
-      dd($json);
-    //   if($json['error']['code']==0){
-    //     \Session::put('_id',$json['data']['idViatico']);
-    //     unset($json['data']['idViatico']);
-    //     \Session::put('created',$json['data']['created']);
-    //     unset($json['data']['created']); 
-    //     foreach($json['data'] as $fase=>$data){
-    //       \Session::put('fase.'.$fase,$data);
-    //     }
-    //     \Session::put('faseActual','detalleComision');
-    //     \Session::put('faseActualDatos','fase.detalleComision');
-    //     $parametros  = $this->generaFases() + $this->generaDefinicion();
-    //     \Session::put('urlBack', '/svte');        
-    //     return \View::make('fsvte.fichaSVTE')->with($parametros);        
-    //   }else{
-    //     $retorno = json_encode(['color'=>'#C6383D',
-    //       'error'=>$json['error']['code'],
-    //       'msg'=>$json['error']['msg']
-    //     ]);
-    //     return redirect('/svte')->with($retorno);          
-    //   }
-    // }else{
-    //   $internacional = $request->input('name');
-    //   \Session::put('internacional',$internacional);
-    //   $util = new Utilidades();
-    //   $parametros = ['security'=>[
-    //       'sessionId' => \Session::get('sessionId')
-    //     ],
-    //     'data'=>[
-    //       'name' => $internacional
-    //     ]
-    //   ];
-    //   $json = $util->muleConnection('POST','/viaticos/saveSchemaViaticos', 10010,$parametros);
-    //   if($json['error']['code']==0){
-    //     \Session::put('_id',$json['data']['idViatico']);
-    //     unset($json['data']['idViatico']);
-    //     \Session::put('created',$json['data']['created']);
-    //     unset($json['data']['created']); 
-    //     foreach($json['data'] as $fase=>$data){
-    //       \Session::put('fase.'.$fase,$data);
-    //     }
-    //     \Session::put('faseActual','detalleComision');
-    //     \Session::put('faseActualDatos','fase.detalleComision');
-    //     $parametros  = $this->generaFases() + $this->generaDefinicion();
-    //     \Session::put('urlBack', '/svte');        
-    //     return \View::make('fsvte.fichaSVTE')->with($parametros);        
-    //   }else{
-    //     $retorno = json_encode(['color'=>'#C6383D',
-    //       'error'=>$json['error']['code'],
-    //       'msg'=>$json['error']['msg']
-    //     ]);
-    //     return redirect('/svte')->with($retorno);          
-    //   }
-    // }     
+    $util = new Utilidades();
+    $parametros = ['security'=>[
+        'sessionId' => \Session::get('sessionId')
+      ],
+      'data'=>[
+        'name' => $input['tipo'],
+        'anio' => json_decode($input['year'])
+      ]
+    ];
+    $json = $util->muleConnection('POST','/comsoc/saveSchemaExpediente', 10017,$parametros);
+    // dd($json);
+    if($json['error']['code']==0){
+      \Session::put('_id',$json['data']['idExpediente']);
+      unset($json['data']['idExpediente']);
+      \Session::put('created',$json['data']['created']);
+      unset($json['data']['created']); 
+      // foreach($json['data'] as $fase => $data){
+        \Session::put('fase.requisicion', $json['data']);
+      // }
+      \Session::put('faseActual','requisicion');
+      \Session::put('faseActualDatos','fase.requisicion');
+      $parametros  = $this->generaFases() + $this->generaDefinicion();
+      \Session::put('urlBack', '/svte');        
+      return \View::make('fsvte.fichaSVTE')->with($parametros);        
+    }else{
+      $retorno = json_encode(['color'=>'#C6383D',
+        'error'=>$json['error']['code'],
+        'msg'=>$json['error']['msg']
+      ]);
+      return redirect('/svte')->with($retorno);          
+    }     
   }
 
   public function editaFicha(Request $request){
@@ -225,239 +179,239 @@ class fsvte extends Controller{
     }
   }
 
-  public function guardaFicha(Request $request){
-    \Session::reflash(); 
-    $input = $request->input();
-    if(\Session::get('faseActual') != 'detalleComision'){
-      foreach($input['pasajes'] as $pk => $pit){
-        $input['pasajes'][$pk]['montoPasajes'] = json_decode($pit['montoPasajes']);
-      }
-      foreach($input['viaticos'] as $vk => $vit){
-        $input['viaticos'][$vk]['montoViaticos'] = json_decode($vit['montoViaticos']);
-      }
-    }
-    unset($input['_token']);
-    $validacion = $this->validaFase($input);
-    if($validacion['valido']){
-      $util = new Utilidades();
-      $faseArray = $this->generaFases()['sidebar'][\Session::get('faseActual')]['array'];
-      if($faseArray){ 
-        $input = [$input]; 
-      }
-      if (\Session::get('faseActual') == 'detalleComision') {
-        if (count($input['documents']) != 0) {
-          $parametros = ['security'=>['sessionId'=>\Session::get('sessionId')],
-            'data'=>['idViatico'=>\Session::get('_id'),
-              'fase'=>\Session::get('faseActual'),
-              'modified' =>[
-                \Session::get('faseActual') => $input,
-              ]
-            ]
-          ];
-        }else{
-          $retorno = json_encode(['color'=>'#C6383D',
-            'error'=> 99,
-            'msg'=> 'Debe ingresar un documento'
-          ]);
-          return $retorno;
-        }
-      }else{
-        $parametros = ['security'=>['sessionId'=>\Session::get('sessionId')],
-          'data'=>['idViatico'=>\Session::get('_id'),
-            'fase'=>\Session::get('faseActual'),
-            'modified' =>[
-              \Session::get('faseActual')=>[
-                'comisionados' => $input
-              ],
-              'vacio' => false
-            ],
-            'position'=>(\Session::has('faseArrayEdit'))?(int)\Session::get('faseArrayEdit'):null
-          ]
-        ];          
-      }
-      $viatico = \Session::get('_id');
-      $json = $util->muleConnection('PUT','/viaticos/schemaViaticos?token='.\Session::get('sessionId').'&viatico='.$viatico,10010,$parametros);
-      if($json['error']['code']==0){
-        \Session::forget('fase.'.\Session::get('faseActual'));
-        \Session::put('fase.'.\Session::get('faseActual'),$json['data'][\Session::get('faseActual')]);
-        $retorno = json_encode(['color'=>'blue',
-          'error'=>$json['error']['code'],
-          'msg'=>$json['error']['msg'],
-          'fase'=>\Session::get('faseActual')
-        ]);
-        if($faseArray){
-          \Session::forget('faseStatus.'.\Session::get('faseActual'));
-          \Session::put('faseStatus.'.\Session::get('faseActual'),'table');
-          \Session::forget('faseArrayEdit');
-        }
-      }else{
-        $retorno = json_encode(['color'=>'#C6383D',
-          'error'=>$json['error']['code'],
-          'msg'=>$json['error']['msg']
-        ]);
-      }      
-    }else{
-      $retorno = json_encode(['color'=>'#C6383D',
-        'error'=>99,
-        'msg'=>'Hay campos con errores',
-        'validacion'=>$validacion['validacion']
-      ]); 
-    }
-    return $retorno;
-  }
+  // public function guardaFicha(Request $request){
+  //   \Session::reflash(); 
+  //   $input = $request->input();
+  //   if(\Session::get('faseActual') != 'detalleComision'){
+  //     foreach($input['pasajes'] as $pk => $pit){
+  //       $input['pasajes'][$pk]['montoPasajes'] = json_decode($pit['montoPasajes']);
+  //     }
+  //     foreach($input['viaticos'] as $vk => $vit){
+  //       $input['viaticos'][$vk]['montoViaticos'] = json_decode($vit['montoViaticos']);
+  //     }
+  //   }
+  //   unset($input['_token']);
+  //   $validacion = $this->validaFase($input);
+  //   if($validacion['valido']){
+  //     $util = new Utilidades();
+  //     $faseArray = $this->generaFases()['sidebar'][\Session::get('faseActual')]['array'];
+  //     if($faseArray){ 
+  //       $input = [$input]; 
+  //     }
+  //     if (\Session::get('faseActual') == 'detalleComision') {
+  //       if (count($input['documents']) != 0) {
+  //         $parametros = ['security'=>['sessionId'=>\Session::get('sessionId')],
+  //           'data'=>['idViatico'=>\Session::get('_id'),
+  //             'fase'=>\Session::get('faseActual'),
+  //             'modified' =>[
+  //               \Session::get('faseActual') => $input,
+  //             ]
+  //           ]
+  //         ];
+  //       }else{
+  //         $retorno = json_encode(['color'=>'#C6383D',
+  //           'error'=> 99,
+  //           'msg'=> 'Debe ingresar un documento'
+  //         ]);
+  //         return $retorno;
+  //       }
+  //     }else{
+  //       $parametros = ['security'=>['sessionId'=>\Session::get('sessionId')],
+  //         'data'=>['idViatico'=>\Session::get('_id'),
+  //           'fase'=>\Session::get('faseActual'),
+  //           'modified' =>[
+  //             \Session::get('faseActual')=>[
+  //               'comisionados' => $input
+  //             ],
+  //             'vacio' => false
+  //           ],
+  //           'position'=>(\Session::has('faseArrayEdit'))?(int)\Session::get('faseArrayEdit'):null
+  //         ]
+  //       ];          
+  //     }
+  //     $viatico = \Session::get('_id');
+  //     $json = $util->muleConnection('PUT','/viaticos/schemaViaticos?token='.\Session::get('sessionId').'&viatico='.$viatico,10010,$parametros);
+  //     if($json['error']['code']==0){
+  //       \Session::forget('fase.'.\Session::get('faseActual'));
+  //       \Session::put('fase.'.\Session::get('faseActual'),$json['data'][\Session::get('faseActual')]);
+  //       $retorno = json_encode(['color'=>'blue',
+  //         'error'=>$json['error']['code'],
+  //         'msg'=>$json['error']['msg'],
+  //         'fase'=>\Session::get('faseActual')
+  //       ]);
+  //       if($faseArray){
+  //         \Session::forget('faseStatus.'.\Session::get('faseActual'));
+  //         \Session::put('faseStatus.'.\Session::get('faseActual'),'table');
+  //         \Session::forget('faseArrayEdit');
+  //       }
+  //     }else{
+  //       $retorno = json_encode(['color'=>'#C6383D',
+  //         'error'=>$json['error']['code'],
+  //         'msg'=>$json['error']['msg']
+  //       ]);
+  //     }      
+  //   }else{
+  //     $retorno = json_encode(['color'=>'#C6383D',
+  //       'error'=>99,
+  //       'msg'=>'Hay campos con errores',
+  //       'validacion'=>$validacion['validacion']
+  //     ]); 
+  //   }
+  //   return $retorno;
+  // }
 
-  public function finRegistro(Request $request){
-    $util = new Utilidades();
-    $viatico = \Session::get('_id');
-    if ($request->ajax()) {
-      if (count(\Session::get('fase.'.\Session::get('faseActual').'.comisionados')) == 0) {
-        $retorno = json_encode(['color'=>'#C6383D',
-          'error'=>99,
-          'msg'=>'Debe existir minimo un comisionado'
-        ]);
-      }else{
-        if (\Session::get('fase.detalleComision.vacio') != true) {
-          $obsTitular = $request->input('observacionesTitular')?$request->input('observacionesTitular'):null;
-          $obsDGA = $request->input('observacionesDGA')?$request->input('observacionesDGA'):null;
-          $collectReq = array('observacionesTitular' => $obsTitular, 'observacionesDGA' => $obsDGA);
-          $comisionados = \Session::get('fase.'.\Session::get('faseActual').'.comisionados');
-          $sum = 0;
-          foreach ($comisionados as $key => $item) {
-            foreach ($item['pasajes'] as $pkey => $pitem) {
-              settype($pitem['montoPasajes'], "double");
-              $sum += $pitem['montoPasajes'];
-            }
-            foreach ($item['viaticos'] as $vkey => $vitem) {
-              settype($vitem['montoViaticos'], "double");
-              $sum += $vitem['montoViaticos']; 
-            }
-          }            
-          $parametros = [
-            'security' => [
-              'sessionId'=>\Session::get('sessionId')
-            ],
-            'data' =>[
-              'idViatico'=>\Session::get('_id'),
-              'fase'=>\Session::get('faseActual'),
-              'modified'=>[
-                \Session::get('faseActual') => [
-                  'numComisionados' => count($comisionados),
-                  'montoTotal' => $sum
-                ]
-              ]
-            ]            
-          ];
-          collect($collectReq)->filter(function($v, $k){
-            return $v != null;
-          })->each(function($v, $k) use(&$parametros){
-            $parametros['data']['modified'][\Session::get('faseActual')][$k] = $v;
-          });
-          // dd(json_encode($parametros));
-          $json = $util->muleConnection('PUT', '/viaticos/schemaViaticos?token='.\Session::get('sessionId'), 10010, $parametros);
-          if ($json['error']['code'] == 0) {           
-            $respuesta = $util->muleConnection('GET','/viaticos/statusFwd?token='.\Session::get('sessionId').'&viatico='.$viatico,10010);
-            if($respuesta['error']['code']==0){
-              $retorno = json_encode(['color'=>'blue',
-                'error'=>$respuesta['error']['code'],
-                'msg'=>$respuesta['error']['msg']
-              ]);
-            }else{
-              $retorno = json_encode(['color'=>'#C6383D',
-                'error'=>$respuesta['error']['code'],
-                'msg'=>$respuesta['error']['msg']
-              ]);
-            }
-          }else{
-            $retorno = json_encode([
-              'color' => '#C6383D',
-              'error' => $json['error']['code'],
-              'msg' => $json['error']['msg']
-            ]);
-          }
-        }else{
-          $retorno = json_encode(['color'=>'#C6383D',
-            'error'=>99,
-            'msg'=>'Debe llenar la fase anterior'
-          ]);
-        }
-      }
-      return $retorno;   
-    }
-  }
+  // public function finRegistro(Request $request){
+  //   $util = new Utilidades();
+  //   $viatico = \Session::get('_id');
+  //   if ($request->ajax()) {
+  //     if (count(\Session::get('fase.'.\Session::get('faseActual').'.comisionados')) == 0) {
+  //       $retorno = json_encode(['color'=>'#C6383D',
+  //         'error'=>99,
+  //         'msg'=>'Debe existir minimo un comisionado'
+  //       ]);
+  //     }else{
+  //       if (\Session::get('fase.detalleComision.vacio') != true) {
+  //         $obsTitular = $request->input('observacionesTitular')?$request->input('observacionesTitular'):null;
+  //         $obsDGA = $request->input('observacionesDGA')?$request->input('observacionesDGA'):null;
+  //         $collectReq = array('observacionesTitular' => $obsTitular, 'observacionesDGA' => $obsDGA);
+  //         $comisionados = \Session::get('fase.'.\Session::get('faseActual').'.comisionados');
+  //         $sum = 0;
+  //         foreach ($comisionados as $key => $item) {
+  //           foreach ($item['pasajes'] as $pkey => $pitem) {
+  //             settype($pitem['montoPasajes'], "double");
+  //             $sum += $pitem['montoPasajes'];
+  //           }
+  //           foreach ($item['viaticos'] as $vkey => $vitem) {
+  //             settype($vitem['montoViaticos'], "double");
+  //             $sum += $vitem['montoViaticos']; 
+  //           }
+  //         }            
+  //         $parametros = [
+  //           'security' => [
+  //             'sessionId'=>\Session::get('sessionId')
+  //           ],
+  //           'data' =>[
+  //             'idViatico'=>\Session::get('_id'),
+  //             'fase'=>\Session::get('faseActual'),
+  //             'modified'=>[
+  //               \Session::get('faseActual') => [
+  //                 'numComisionados' => count($comisionados),
+  //                 'montoTotal' => $sum
+  //               ]
+  //             ]
+  //           ]            
+  //         ];
+  //         collect($collectReq)->filter(function($v, $k){
+  //           return $v != null;
+  //         })->each(function($v, $k) use(&$parametros){
+  //           $parametros['data']['modified'][\Session::get('faseActual')][$k] = $v;
+  //         });
+  //         // dd(json_encode($parametros));
+  //         $json = $util->muleConnection('PUT', '/viaticos/schemaViaticos?token='.\Session::get('sessionId'), 10010, $parametros);
+  //         if ($json['error']['code'] == 0) {           
+  //           $respuesta = $util->muleConnection('GET','/viaticos/statusFwd?token='.\Session::get('sessionId').'&viatico='.$viatico,10010);
+  //           if($respuesta['error']['code']==0){
+  //             $retorno = json_encode(['color'=>'blue',
+  //               'error'=>$respuesta['error']['code'],
+  //               'msg'=>$respuesta['error']['msg']
+  //             ]);
+  //           }else{
+  //             $retorno = json_encode(['color'=>'#C6383D',
+  //               'error'=>$respuesta['error']['code'],
+  //               'msg'=>$respuesta['error']['msg']
+  //             ]);
+  //           }
+  //         }else{
+  //           $retorno = json_encode([
+  //             'color' => '#C6383D',
+  //             'error' => $json['error']['code'],
+  //             'msg' => $json['error']['msg']
+  //           ]);
+  //         }
+  //       }else{
+  //         $retorno = json_encode(['color'=>'#C6383D',
+  //           'error'=>99,
+  //           'msg'=>'Debe llenar la fase anterior'
+  //         ]);
+  //       }
+  //     }
+  //     return $retorno;   
+  //   }
+  // }
 
-  public function getEstados(Request $request){
-    if ($request->ajax()) {
-      $util = new Utilidades();
-      $json = $util->muleConnection('GET','/viaticos/catalogos/lugares?continente=América&pais=MEX',10010,false);
-      $collection = collect($json['data']['estado']);
-      $estado = $collection->map(function ($item, $key) {
-        return [$key, $item['claveEstado'], $item['nombreEstado']];
-      });
-      return response()->json($estado->all());      
-    }
-  }
+  // public function getEstados(Request $request){
+  //   if ($request->ajax()) {
+  //     $util = new Utilidades();
+  //     $json = $util->muleConnection('GET','/viaticos/catalogos/lugares?continente=América&pais=MEX',10010,false);
+  //     $collection = collect($json['data']['estado']);
+  //     $estado = $collection->map(function ($item, $key) {
+  //       return [$key, $item['claveEstado'], $item['nombreEstado']];
+  //     });
+  //     return response()->json($estado->all());      
+  //   }
+  // }
 
-  public function getMunicipio(Request $request){
-    $municipio = $request->input('municipio');
-    if ($request->ajax()) {
-      $util = new Utilidades();
-      $json = $util->muleConnection('GET','/viaticos/catalogos/lugares?continente=América&pais=MEX&edo='.$municipio,10010,false);
-      return response()->json($json['data']);
-    }
-  }
+  // public function getMunicipio(Request $request){
+  //   $municipio = $request->input('municipio');
+  //   if ($request->ajax()) {
+  //     $util = new Utilidades();
+  //     $json = $util->muleConnection('GET','/viaticos/catalogos/lugares?continente=América&pais=MEX&edo='.$municipio,10010,false);
+  //     return response()->json($json['data']);
+  //   }
+  // }
 
-  public function getContinente(Request $request){
-    if ($request->input('continente') == 'África') {
-      $afr = $request->input('continente');
-      $afr = '%C3%81frica'; 
-     if ($request->ajax()) {
-        $util = new Utilidades();
-        $json = $util->muleConnection('GET','/viaticos/catalogos/lugares?continente='.$afr,10010,false);
-        $collection = collect($json['data']);
-        $estado = $collection->map(function ($item, $key) {
-          return [$key, $item['clavePais'], $item['nombrePais']];
-        });
-        return response()->json($estado->all());
-      }
-    }else{
-      if ($request->ajax()) {
-        $util = new Utilidades();
-        $json = $util->muleConnection('GET','/viaticos/catalogos/lugares?continente='.$request->input('continente'),10010,false);
-        $collection = collect($json['data']);
-        $estado = $collection->map(function ($item, $key) {
-          return [$key, $item['clavePais'], $item['nombrePais']];
-        });
-        return response()->json($estado->all());
-      }  
-    }
-  }
+  // public function getContinente(Request $request){
+  //   if ($request->input('continente') == 'África') {
+  //     $afr = $request->input('continente');
+  //     $afr = '%C3%81frica'; 
+  //    if ($request->ajax()) {
+  //       $util = new Utilidades();
+  //       $json = $util->muleConnection('GET','/viaticos/catalogos/lugares?continente='.$afr,10010,false);
+  //       $collection = collect($json['data']);
+  //       $estado = $collection->map(function ($item, $key) {
+  //         return [$key, $item['clavePais'], $item['nombrePais']];
+  //       });
+  //       return response()->json($estado->all());
+  //     }
+  //   }else{
+  //     if ($request->ajax()) {
+  //       $util = new Utilidades();
+  //       $json = $util->muleConnection('GET','/viaticos/catalogos/lugares?continente='.$request->input('continente'),10010,false);
+  //       $collection = collect($json['data']);
+  //       $estado = $collection->map(function ($item, $key) {
+  //         return [$key, $item['clavePais'], $item['nombrePais']];
+  //       });
+  //       return response()->json($estado->all());
+  //     }  
+  //   }
+  // }
 
-  public function getPaisInternacional(Request $request){
-    $pais = $request->input('pais');
-    if ($request->input('continente') == 'África') {
-      $afr = $request->input('continente');
-      $afr = '%C3%81frica'; 
-     if ($request->ajax()) {
-        $util = new Utilidades();
-        $json = $util->muleConnection('GET','/viaticos/catalogos/lugares?continente='.$afr.'&pais='.$pais,10010,false);
-        $collection = collect($json['data']['estado']);
-        $estado = $collection->map(function ($item, $key) {
-          return [$key, $item['nombreEstado']];
-        });
-        return response()->json($estado->all());
-      }
-    }else{
-      if ($request->ajax()) {
-        $util = new Utilidades();
-        $json = $util->muleConnection('GET','/viaticos/catalogos/lugares?continente='.$request->input('continente').'&pais='.$pais,10010,false);
-        $collection = collect($json['data']['estado']);
-        $estado = $collection->map(function ($item, $key) {
-          return [$key, $item['nombreEstado']];
-        });
-        return response()->json($estado->all());
-      }  
-    }
-  }
+  // public function getPaisInternacional(Request $request){
+  //   $pais = $request->input('pais');
+  //   if ($request->input('continente') == 'África') {
+  //     $afr = $request->input('continente');
+  //     $afr = '%C3%81frica'; 
+  //    if ($request->ajax()) {
+  //       $util = new Utilidades();
+  //       $json = $util->muleConnection('GET','/viaticos/catalogos/lugares?continente='.$afr.'&pais='.$pais,10010,false);
+  //       $collection = collect($json['data']['estado']);
+  //       $estado = $collection->map(function ($item, $key) {
+  //         return [$key, $item['nombreEstado']];
+  //       });
+  //       return response()->json($estado->all());
+  //     }
+  //   }else{
+  //     if ($request->ajax()) {
+  //       $util = new Utilidades();
+  //       $json = $util->muleConnection('GET','/viaticos/catalogos/lugares?continente='.$request->input('continente').'&pais='.$pais,10010,false);
+  //       $collection = collect($json['data']['estado']);
+  //       $estado = $collection->map(function ($item, $key) {
+  //         return [$key, $item['nombreEstado']];
+  //       });
+  //       return response()->json($estado->all());
+  //     }  
+  //   }
+  // }
 
   public function validaFase(&$fase){
     $valido = true;
@@ -978,896 +932,897 @@ class fsvte extends Controller{
       return ['item'=>$retorno];
   }
 
-  public function firmaTitular(Request $request){
-    \Session::reflash();
-    \Session::forget('_id');
-    \Session::forget('created');
-    \Session::forget('fase');
-    \Session::forget('faseActualDatos');
-    $util = new Utilidades();
-    $viatico = $request['f'];
-    $session = $request['sess'];
-    $json = $util->muleConnection('GET','/viaticos/schemaViaticos?token='.$session.'&viatico='.$viatico, 10010);
-     if($json['error']['code']==0){
-        \Session::put('_id',$json['data']['_id']);
-        \Session::put('created',$json['data']['created']);
-        unset($json['data']['created']); 
-        unset($json['data']['fase']);
-        unset($json['data']['cdmxIdCreated']);
-        unset($json['data']['activo']);
-        foreach($json['data'] as $fase=>$data){
-          \Session::put('fase.'.$fase,$data);
-        }
-        \Session::put('faseActual',$fase);
-        $datos = $json;
-        return view('fsvte.infoTitular', compact('datos'));
-    }else{
-        return redirect('/svte');
-    }
-  }
+  // public function firmaTitular(Request $request){
+  //   \Session::reflash();
+  //   \Session::forget('_id');
+  //   \Session::forget('created');
+  //   \Session::forget('fase');
+  //   \Session::forget('faseActualDatos');
+  //   $util = new Utilidades();
+  //   $viatico = $request['f'];
+  //   $session = $request['sess'];
+  //   $json = $util->muleConnection('GET','/viaticos/schemaViaticos?token='.$session.'&viatico='.$viatico, 10010);
+  //    if($json['error']['code']==0){
+  //       \Session::put('_id',$json['data']['_id']);
+  //       \Session::put('created',$json['data']['created']);
+  //       unset($json['data']['created']); 
+  //       unset($json['data']['fase']);
+  //       unset($json['data']['cdmxIdCreated']);
+  //       unset($json['data']['activo']);
+  //       foreach($json['data'] as $fase=>$data){
+  //         \Session::put('fase.'.$fase,$data);
+  //       }
+  //       \Session::put('faseActual',$fase);
+  //       $datos = $json;
+  //       return view('fsvte.infoTitular', compact('datos'));
+  //   }else{
+  //       return redirect('/svte');
+  //   }
+  // }
 
-  public function firmaDga(Request $request){
-    \Session::reflash();
-    \Session::forget('_id');
-    \Session::forget('created');
-    \Session::forget('fase');
-    \Session::forget('faseActualDatos');
-    $util = new Utilidades();
-    $viatico = $request['f'];
-    $session = $request['sess'];
-    $json = $util->muleConnection('GET','/viaticos/schemaViaticos?token='.$session.'&viatico='.$viatico, 10010);
-     if($json['error']['code']==0){
-        \Session::put('_id',$json['data']['_id']);
-        \Session::put('created',$json['data']['created']);
-        unset($json['data']['created']); 
-        unset($json['data']['fase']);
-        unset($json['data']['cdmxIdCreated']);
-        unset($json['data']['activo']);
-        foreach($json['data'] as $fase=>$data){
-          \Session::put('fase.'.$fase,$data);
-        }
-        \Session::put('faseActual',$fase);
-        $datos = $json;
-        return view('fsvte.infoDga', compact('datos'));
-    }else{
-        return redirect('/svte');
-    }
-  }
+  // public function firmaDga(Request $request){
+  //   \Session::reflash();
+  //   \Session::forget('_id');
+  //   \Session::forget('created');
+  //   \Session::forget('fase');
+  //   \Session::forget('faseActualDatos');
+  //   $util = new Utilidades();
+  //   $viatico = $request['f'];
+  //   $session = $request['sess'];
+  //   $json = $util->muleConnection('GET','/viaticos/schemaViaticos?token='.$session.'&viatico='.$viatico, 10010);
+  //    if($json['error']['code']==0){
+  //       \Session::put('_id',$json['data']['_id']);
+  //       \Session::put('created',$json['data']['created']);
+  //       unset($json['data']['created']); 
+  //       unset($json['data']['fase']);
+  //       unset($json['data']['cdmxIdCreated']);
+  //       unset($json['data']['activo']);
+  //       foreach($json['data'] as $fase=>$data){
+  //         \Session::put('fase.'.$fase,$data);
+  //       }
+  //       \Session::put('faseActual',$fase);
+  //       $datos = $json;
+  //       return view('fsvte.infoDga', compact('datos'));
+  //   }else{
+  //       return redirect('/svte');
+  //   }
+  // }
 
-  public function muestraPDFFirma(Request $request){
-    $util = new Utilidades();
-    $viatico = \Session::get('_id');
-    $session = \Session::get('sessionId');
-    $json = $util->muleConnection('GET','/viaticos/schemaViaticos?token='.$session.'&viatico='.$viatico, 10010);
-    if ($json['error']['code'] == 0) {
-      $json['data']['created']=Utilidades::convertidorFecha($json['data']['created'],'unix');
-      switch ($json['data']['status']) {
-        case 'captura':
-          $json['data']['status'] = 'En proceso de Captura';
-          break;
-        case 'firmaTitular':
-          $json['data']['status'] = 'En Firma del Titular';
-          break;
-        case 'firmaDGA':
-          $json['data']['status'] = 'En Firma del DGA';
-          break;
-        case 'Autorizado':
-          $json['data']['status'] = 'Autorizado';
-          break;
-      }
-      $paper_size = array(0,0,612.00,792.00);
-      switch ($json['data']['detalleComision']['nombre']) {
-        case 'nacional':
-          $templateDoc = 'pdf.consNacional';
-          break;
+  // public function muestraPDFFirma(Request $request){
+  //   $util = new Utilidades();
+  //   $viatico = \Session::get('_id');
+  //   $session = \Session::get('sessionId');
+  //   $json = $util->muleConnection('GET','/viaticos/schemaViaticos?token='.$session.'&viatico='.$viatico, 10010);
+  //   if ($json['error']['code'] == 0) {
+  //     $json['data']['created']=Utilidades::convertidorFecha($json['data']['created'],'unix');
+  //     switch ($json['data']['status']) {
+  //       case 'captura':
+  //         $json['data']['status'] = 'En proceso de Captura';
+  //         break;
+  //       case 'firmaTitular':
+  //         $json['data']['status'] = 'En Firma del Titular';
+  //         break;
+  //       case 'firmaDGA':
+  //         $json['data']['status'] = 'En Firma del DGA';
+  //         break;
+  //       case 'Autorizado':
+  //         $json['data']['status'] = 'Autorizado';
+  //         break;
+  //     }
+  //     $paper_size = array(0,0,612.00,792.00);
+  //     switch ($json['data']['detalleComision']['nombre']) {
+  //       case 'nacional':
+  //         $templateDoc = 'pdf.consNacional';
+  //         break;
         
-        case 'internacional':
-          $templateDoc = 'pdf.consInternacional';
-          break;
-      }
-      $pdf =  base64_encode(\PDF::loadHTML(\View::make($templateDoc)->with($json['data']))
-        ->setPaper($paper_size, 'portrait')
-        ->setWarnings(false)->stream());
-      return ['pdf'=>$pdf];
-    }else{
-      $retorno = json_encode(['color'=>'#C6383D',
-        'error'=>$json['error']['code'],
-        'msg'=>$json['error']['msg']
-      ]);
-    }
-    return $retorno;
-  }
+  //       case 'internacional':
+  //         $templateDoc = 'pdf.consInternacional';
+  //         break;
+  //     }
+  //     $pdf =  base64_encode(\PDF::loadHTML(\View::make($templateDoc)->with($json['data']))
+  //       ->setPaper($paper_size, 'portrait')
+  //       ->setWarnings(false)->stream());
+  //     return ['pdf'=>$pdf];
+  //   }else{
+  //     $retorno = json_encode(['color'=>'#C6383D',
+  //       'error'=>$json['error']['code'],
+  //       'msg'=>$json['error']['msg']
+  //     ]);
+  //   }
+  //   return $retorno;
+  // }
 
-  public function firma(Request $request){
-    if(\Session::has('firmaactiva')){
-      $util = new Utilidades();
-      $viatico = \Session::get('_id');
-      $tipoViatico = \Session::get('fase.detalleComision.nombre');
-      $retorno = $this->muestraPDFFirma($request);
-      $pdf = base64_decode($retorno['pdf']);
-      \Storage::disk('files')->put('/'.'viaticos'.'/'.$tipoViatico.'/'.$viatico.'/'.$request->docId.'.pdf',$pdf);
-      $parametros = [
-        'data' => [
-          'nombreDir' => '/'.'viaticos'.'/'.$tipoViatico.'/'.$viatico.'/',
-          'separador' => '/',
-          'archivoenv' => [$request->docId.'.pdf']
-        ]
-      ];
-      $retorno = $util->muleConnection('POST','/viaticos/moveFileViewToMule',10010,$parametros);
-      if($retorno['error']['code']==0){
-        $parametros = [
-          'security' => ['cdmxId'=>\Session::get('cdmxId')],
-          'data' => ['system' => 'Viatinet',
-            'pathrelativo' => '',
-            'password' => \Session::get('password') ,
-            'nombre' => '/'.'viaticos'.'/'.$tipoViatico.'/'.$viatico.'/'.$request->docId.'.pdf',
-            'byteKey'=> \Session::get('bytekey'),
-            'bytecer' => \Session::get('bytecer'), 
-            'tipofirma' => '1'
-          ]
-        ];
-        $retorno = $util->muleConnection('POST','/externs/signedFIELCDMX',9005,$parametros);
-        if($retorno['error']['code']==0){            
-          $archivo = $request->docId.'.pdf';
-          $archivoFirmado = $request->docId.'firmado.pdf';
-          $parametros = [
-            'data' => ['nombreDir' => '/'.'viaticos'.'/'.$tipoViatico.'/'.$viatico,
-               'separador' => '/',
-               'archivoenv' => [$archivo,$archivoFirmado]
-            ]
-          ];
-          $retorno = $util->muleConnection('POST','/viaticos/moveFileMuleToStorage',10010,$parametros);
-          if($retorno['error']['code'] == 0){
-            $respuesta = $util->muleConnection('GET','/viaticos/statusFwd?token='.\Session::get('sessionId').'&viatico='.$viatico,10010);
-            if($respuesta['error']['code'] == 0){
-              return ['error'=>['code'=>0,'msg'=>'Se ha finalizado el proceso correctamente'],'color'=>'blue'];
-            }else{
-              return ['error'=>['code'=>1,'msg'=>'Ha fallado el proceso de firmado'],'color'=>'#C6383D'];
-            }
-          }else{
-            return ['error'=>['code'=>3,'msg'=>'Ha fallado el proceso de firmado'],'color'=>'#C6383D'];
-          }
-        }else{
-          return ['error'=>['code'=>4,'msg'=>'Ha fallado el proceso de firmado'],'color'=>'#C6383D'];
-        }
-      }else{
-        return ['error'=>['code'=>5,'msg'=>'Ha fallado el proceso de firmado'],'color'=>'#C6383D'];
-      }
-    }else{
-      return ['error'=>['code'=>1,'msg'=>'No haz cargado la Firma Electrónica'],'color'=>'#C6383D'];
-    }
-  }
+  // public function firma(Request $request){
+  //   if(\Session::has('firmaactiva')){
+  //     $util = new Utilidades();
+  //     $viatico = \Session::get('_id');
+  //     $tipoViatico = \Session::get('fase.detalleComision.nombre');
+  //     $retorno = $this->muestraPDFFirma($request);
+  //     $pdf = base64_decode($retorno['pdf']);
+  //     \Storage::disk('files')->put('/'.'viaticos'.'/'.$tipoViatico.'/'.$viatico.'/'.$request->docId.'.pdf',$pdf);
+  //     $parametros = [
+  //       'data' => [
+  //         'nombreDir' => '/'.'viaticos'.'/'.$tipoViatico.'/'.$viatico.'/',
+  //         'separador' => '/',
+  //         'archivoenv' => [$request->docId.'.pdf']
+  //       ]
+  //     ];
+  //     $retorno = $util->muleConnection('POST','/viaticos/moveFileViewToMule',10010,$parametros);
+  //     if($retorno['error']['code']==0){
+  //       $parametros = [
+  //         'security' => ['cdmxId'=>\Session::get('cdmxId')],
+  //         'data' => ['system' => 'Viatinet',
+  //           'pathrelativo' => '',
+  //           'password' => \Session::get('password') ,
+  //           'nombre' => '/'.'viaticos'.'/'.$tipoViatico.'/'.$viatico.'/'.$request->docId.'.pdf',
+  //           'byteKey'=> \Session::get('bytekey'),
+  //           'bytecer' => \Session::get('bytecer'), 
+  //           'tipofirma' => '1'
+  //         ]
+  //       ];
+  //       $retorno = $util->muleConnection('POST','/externs/signedFIELCDMX',9005,$parametros);
+  //       if($retorno['error']['code']==0){            
+  //         $archivo = $request->docId.'.pdf';
+  //         $archivoFirmado = $request->docId.'firmado.pdf';
+  //         $parametros = [
+  //           'data' => ['nombreDir' => '/'.'viaticos'.'/'.$tipoViatico.'/'.$viatico,
+  //              'separador' => '/',
+  //              'archivoenv' => [$archivo,$archivoFirmado]
+  //           ]
+  //         ];
+  //         $retorno = $util->muleConnection('POST','/viaticos/moveFileMuleToStorage',10010,$parametros);
+  //         if($retorno['error']['code'] == 0){
+  //           $respuesta = $util->muleConnection('GET','/viaticos/statusFwd?token='.\Session::get('sessionId').'&viatico='.$viatico,10010);
+  //           if($respuesta['error']['code'] == 0){
+  //             return ['error'=>['code'=>0,'msg'=>'Se ha finalizado el proceso correctamente'],'color'=>'blue'];
+  //           }else{
+  //             return ['error'=>['code'=>1,'msg'=>'Ha fallado el proceso de firmado'],'color'=>'#C6383D'];
+  //           }
+  //         }else{
+  //           return ['error'=>['code'=>3,'msg'=>'Ha fallado el proceso de firmado'],'color'=>'#C6383D'];
+  //         }
+  //       }else{
+  //         return ['error'=>['code'=>4,'msg'=>'Ha fallado el proceso de firmado'],'color'=>'#C6383D'];
+  //       }
+  //     }else{
+  //       return ['error'=>['code'=>5,'msg'=>'Ha fallado el proceso de firmado'],'color'=>'#C6383D'];
+  //     }
+  //   }else{
+  //     return ['error'=>['code'=>1,'msg'=>'No haz cargado la Firma Electrónica'],'color'=>'#C6383D'];
+  //   }
+  // }
 
-  public function setFirma(Request $request){ 
-    if(!$request->hasFile('cer') || !$request->hasFile('key') || trim($request->password)==''){
-      \Session::put('firmaincorrecta',true);
-    }else{
-      $bytecert = base64_encode(\File::get($request->cer->path()));
-      $byteKey = base64_encode(\File::get($request->key->path()));
-      $password = base64_encode($request->password);
-      $util = new Utilidades();
-      $parametros = ['data' => [
-          'password' => $password,
-          'byteKey' => $byteKey,
-          'bytecer' => $bytecert
-        ]
-      ];
-      $respuesta = $util->muleConnection('POST','/externs/validarDatosFirma',9005,$parametros);
-      if($respuesta['error']['code'] == 0){
-        \Session::put('bytecer', $bytecert);
-        \Session::put('bytekey', $byteKey);
-        \Session::put('password', $password);
-        \Session::put('firmaactiva', true);  
-      }else{
-        \Session::put('firmaincorrecta',true);
-        flash($respuesta['error']['msg'])->error();
-        return redirect('/svte');
-      }  
-    }
-    return redirect('/svte');
-  }
+  // public function setFirma(Request $request){ 
+  //   if(!$request->hasFile('cer') || !$request->hasFile('key') || trim($request->password)==''){
+  //     \Session::put('firmaincorrecta',true);
+  //   }else{
+  //     $bytecert = base64_encode(\File::get($request->cer->path()));
+  //     $byteKey = base64_encode(\File::get($request->key->path()));
+  //     $password = base64_encode($request->password);
+  //     $util = new Utilidades();
+  //     $parametros = ['data' => [
+  //         'password' => $password,
+  //         'byteKey' => $byteKey,
+  //         'bytecer' => $bytecert
+  //       ]
+  //     ];
+  //     $respuesta = $util->muleConnection('POST','/externs/validarDatosFirma',9005,$parametros);
+  //     if($respuesta['error']['code'] == 0){
+  //       \Session::put('bytecer', $bytecert);
+  //       \Session::put('bytekey', $byteKey);
+  //       \Session::put('password', $password);
+  //       \Session::put('firmaactiva', true);  
+  //     }else{
+  //       \Session::put('firmaincorrecta',true);
+  //       flash($respuesta['error']['msg'])->error();
+  //       return redirect('/svte');
+  //     }  
+  //   }
+  //   return redirect('/svte');
+  // }
 
-  public function setFirmainsidePage(Request $request){ 
-    if(!$request->hasFile('cer') || !$request->hasFile('key') || trim($request->password)==''){
-      \Session::put('firmaincorrecta',true);
-    }else{
-      $bytecert = base64_encode(\File::get($request->cer->path()));
-      $byteKey = base64_encode(\File::get($request->key->path()));
-      $password = base64_encode($request->password);
-      $util = new Utilidades();
-      $parametros = ['data' => [
-          'password' => $password,
-          'byteKey' => $byteKey,
-          'bytecer' => $bytecert
-        ]
-      ];
-      $respuesta = $util->muleConnection('POST','/externs/validarDatosFirma',9005,$parametros);
-      if($respuesta['error']['code'] == 0){
-        \Session::put('bytecer', $bytecert);
-        \Session::put('bytekey', $byteKey);
-        \Session::put('password', $password);
-        \Session::put('firmaactiva', true);  
-      }else{
-        \Session::put('firmaincorrecta',true);
-        flash($respuesta['error']['msg'])->error();
-        return redirect(\URL::previous());
-      }  
-    }
-    return redirect(\URL::previous());
-  }
+  // public function setFirmainsidePage(Request $request){ 
+  //   if(!$request->hasFile('cer') || !$request->hasFile('key') || trim($request->password)==''){
+  //     \Session::put('firmaincorrecta',true);
+  //   }else{
+  //     $bytecert = base64_encode(\File::get($request->cer->path()));
+  //     $byteKey = base64_encode(\File::get($request->key->path()));
+  //     $password = base64_encode($request->password);
+  //     $util = new Utilidades();
+  //     $parametros = ['data' => [
+  //         'password' => $password,
+  //         'byteKey' => $byteKey,
+  //         'bytecer' => $bytecert
+  //       ]
+  //     ];
+  //     $respuesta = $util->muleConnection('POST','/externs/validarDatosFirma',9005,$parametros);
+  //     if($respuesta['error']['code'] == 0){
+  //       \Session::put('bytecer', $bytecert);
+  //       \Session::put('bytekey', $byteKey);
+  //       \Session::put('password', $password);
+  //       \Session::put('firmaactiva', true);  
+  //     }else{
+  //       \Session::put('firmaincorrecta',true);
+  //       flash($respuesta['error']['msg'])->error();
+  //       return redirect(\URL::previous());
+  //     }  
+  //   }
+  //   return redirect(\URL::previous());
+  // }
 
-  public function forgetFirma(Request $request){ 
-    \Session::forget('bytecer');
-    \Session::forget('bytekey');
-    \Session::forget('password');
-    \Session::forget('firmaactiva');         
-    return redirect(\URL::previous());
-  }
+  // public function forgetFirma(Request $request){ 
+  //   \Session::forget('bytecer');
+  //   \Session::forget('bytekey');
+  //   \Session::forget('password');
+  //   \Session::forget('firmaactiva');         
+  //   return redirect(\URL::previous());
+  // }
 
-  public function exportcsv(){
-    $items = $this->obtieneFichas();
-    if (\Session::get('user.roles')->contains('Viatinet_Operativo')) {
-      if(count($items) != 0){
-        \Excel::create('comisionados_'.\Session::get('user.roles.1'), function($excel) use($items) {
-          $excel->sheet('File', function($sheet) use($items) {
-            $sheet->setAutoFilter('A1:AK1');
-            $sheet->setColumnFormat(array(
-                'Y:AK' => '"$"#,##0.00'
-            ));
-            $sheet->setAutoSize(array(
-              'A', 'B', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'W', 'X', 'Y', 'Z', 'AA'
-            ));
-            $sheet->setWidth(array(
-              'U' => 40,
-              'V' => 40,
-              'AB' => 20,
-              'AC' => 20,
-              'AD' => 20,
-              'AE' => 20,
-              'AF' => 20,
-              'AG' => 20,
-              'AH' => 20,
-              'AI' => 20,
-              'AJ' => 20,
-              'AK' => 20,
-            ));
-            $sheet->loadView('pdf.excel')->with('items', $items);
-          });
-        }, 'UTF-8')->export('xlsx');
-      }else{
-        flash('No hay datos para exportar!!!')->error();
-        return redirect('/svte'); 
-      }
-    }elseif (\Session::get('user.roles')->contains('Viatinet_Titular') || (\Session::get('user.roles')->contains('Viatinet_supTitular'))) {
-      if(count($items) != 0){
-        \Excel::create('comisionados_'.\Session::get('user.roles.1'), function($excel) use($items) {
-          $excel->sheet('File', function($sheet) use($items) {
-            $sheet->setAutoFilter('A1:AK1');
-            $sheet->setColumnFormat(array(
-                'Y:AK' => '"$"#,##0.00'
-            ));
-            $sheet->setAutoSize(array(
-              'A', 'B', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'W', 'X', 'Y', 'Z', 'AA'
-            ));
-            $sheet->setWidth(array(
-              'U' => 40,
-              'V' => 40,
-              'AB' => 20,
-              'AC' => 20,
-              'AD' => 20,
-              'AE' => 20,
-              'AF' => 20,
-              'AG' => 20,
-              'AH' => 20,
-              'AI' => 20,
-              'AJ' => 20,
-              'AK' => 20,
-            ));            
-            $sheet->loadView('pdf.excel')->with('items', $items);
-          });
-        }, 'UTF-8')->export('xlsx');
-      }else{
-        flash('No hay datos para exportar!!!')->error();
-        return redirect('/svte'); 
-      }
-    }elseif (\Session::get('user.roles')->contains('Viatinet_Dga') || (\Session::get('user.roles')->contains('Viatinet_supDga'))) {
-      if(count($items) != 0){
-        \Excel::create('comisionados_'.\Session::get('user.roles.1'), function($excel) use($items) {
-          $excel->sheet('File', function($sheet) use($items) {
-            $sheet->setAutoFilter('A1:AK1');
-            $sheet->setColumnFormat(array(
-                'Y:AK' => '"$"#,##0.00'
-            ));
-            $sheet->setAutoSize(array(
-              'A', 'B', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'W', 'X', 'Y', 'Z', 'AA'
-            ));
-            $sheet->setWidth(array(
-              'U' => 40,
-              'V' => 40,
-              'AB' => 20,
-              'AC' => 20,
-              'AD' => 20,
-              'AE' => 20,
-              'AF' => 20,
-              'AG' => 20,
-              'AH' => 20,
-              'AI' => 20,
-              'AJ' => 20,
-              'AK' => 20,
-            ));
-            $sheet->loadView('pdf.excel')->with('items', $items);
-          });
-        }, 'UTF-8')->export('xlsx');
-      }else{
-        flash('No hay datos para exportar!!!')->error();
-        return redirect('/svte'); 
-      }
-    }
-  }
+  // public function exportcsv(){
+  //   $items = $this->obtieneFichas();
+  //   if (\Session::get('user.roles')->contains('Viatinet_Operativo')) {
+  //     if(count($items) != 0){
+  //       \Excel::create('comisionados_'.\Session::get('user.roles.1'), function($excel) use($items) {
+  //         $excel->sheet('File', function($sheet) use($items) {
+  //           $sheet->setAutoFilter('A1:AK1');
+  //           $sheet->setColumnFormat(array(
+  //               'Y:AK' => '"$"#,##0.00'
+  //           ));
+  //           $sheet->setAutoSize(array(
+  //             'A', 'B', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'W', 'X', 'Y', 'Z', 'AA'
+  //           ));
+  //           $sheet->setWidth(array(
+  //             'U' => 40,
+  //             'V' => 40,
+  //             'AB' => 20,
+  //             'AC' => 20,
+  //             'AD' => 20,
+  //             'AE' => 20,
+  //             'AF' => 20,
+  //             'AG' => 20,
+  //             'AH' => 20,
+  //             'AI' => 20,
+  //             'AJ' => 20,
+  //             'AK' => 20,
+  //           ));
+  //           $sheet->loadView('pdf.excel')->with('items', $items);
+  //         });
+  //       }, 'UTF-8')->export('xlsx');
+  //     }else{
+  //       flash('No hay datos para exportar!!!')->error();
+  //       return redirect('/svte'); 
+  //     }
+  //   }elseif (\Session::get('user.roles')->contains('Viatinet_Titular') || (\Session::get('user.roles')->contains('Viatinet_supTitular'))) {
+  //     if(count($items) != 0){
+  //       \Excel::create('comisionados_'.\Session::get('user.roles.1'), function($excel) use($items) {
+  //         $excel->sheet('File', function($sheet) use($items) {
+  //           $sheet->setAutoFilter('A1:AK1');
+  //           $sheet->setColumnFormat(array(
+  //               'Y:AK' => '"$"#,##0.00'
+  //           ));
+  //           $sheet->setAutoSize(array(
+  //             'A', 'B', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'W', 'X', 'Y', 'Z', 'AA'
+  //           ));
+  //           $sheet->setWidth(array(
+  //             'U' => 40,
+  //             'V' => 40,
+  //             'AB' => 20,
+  //             'AC' => 20,
+  //             'AD' => 20,
+  //             'AE' => 20,
+  //             'AF' => 20,
+  //             'AG' => 20,
+  //             'AH' => 20,
+  //             'AI' => 20,
+  //             'AJ' => 20,
+  //             'AK' => 20,
+  //           ));            
+  //           $sheet->loadView('pdf.excel')->with('items', $items);
+  //         });
+  //       }, 'UTF-8')->export('xlsx');
+  //     }else{
+  //       flash('No hay datos para exportar!!!')->error();
+  //       return redirect('/svte'); 
+  //     }
+  //   }elseif (\Session::get('user.roles')->contains('Viatinet_Dga') || (\Session::get('user.roles')->contains('Viatinet_supDga'))) {
+  //     if(count($items) != 0){
+  //       \Excel::create('comisionados_'.\Session::get('user.roles.1'), function($excel) use($items) {
+  //         $excel->sheet('File', function($sheet) use($items) {
+  //           $sheet->setAutoFilter('A1:AK1');
+  //           $sheet->setColumnFormat(array(
+  //               'Y:AK' => '"$"#,##0.00'
+  //           ));
+  //           $sheet->setAutoSize(array(
+  //             'A', 'B', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'W', 'X', 'Y', 'Z', 'AA'
+  //           ));
+  //           $sheet->setWidth(array(
+  //             'U' => 40,
+  //             'V' => 40,
+  //             'AB' => 20,
+  //             'AC' => 20,
+  //             'AD' => 20,
+  //             'AE' => 20,
+  //             'AF' => 20,
+  //             'AG' => 20,
+  //             'AH' => 20,
+  //             'AI' => 20,
+  //             'AJ' => 20,
+  //             'AK' => 20,
+  //           ));
+  //           $sheet->loadView('pdf.excel')->with('items', $items);
+  //         });
+  //       }, 'UTF-8')->export('xlsx');
+  //     }else{
+  //       flash('No hay datos para exportar!!!')->error();
+  //       return redirect('/svte'); 
+  //     }
+  //   }
+  // }
 
-  public function exportcsvAut(){
-    $items = $this->obtieneFichasAutorizadas();
-    if (\Session::get('user.roles')->contains('Viatinet_Operativo')) {
-      if(count($items) != 0){
-        \Excel::create('comisionados_autorizado_'.\Session::get('user.roles.1'), function($excel) use($items) {
-          $excel->sheet('File', function($sheet) use($items) {
-            $sheet->setAutoFilter('A1:AK1');
-            $sheet->setColumnFormat(array(
-                'Y:AK' => '"$"#,##0.00'
-            ));
-            $sheet->setAutoSize(array(
-              'A', 'B', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'W', 'X', 'Y', 'Z', 'AA'
-            ));
-            $sheet->setWidth(array(
-              'U' => 40,
-              'V' => 40,
-              'AB' => 20,
-              'AC' => 20,
-              'AD' => 20,
-              'AE' => 20,
-              'AF' => 20,
-              'AG' => 20,
-              'AH' => 20,
-              'AI' => 20,
-              'AJ' => 20,
-              'AK' => 20,
-            ));
-            $sheet->loadView('pdf.excel')->with('items', $items);
-          });
-        }, 'UTF-8')->export('xlsx');
-      }else{
-        flash('No hay datos para exportar!!!')->error();
-        return redirect(\URL::previous()); 
-      }
-    }elseif (\Session::get('user.roles')->contains('Viatinet_Titular') || (\Session::get('user.roles')->contains('Viatinet_supTitular'))) {
-      if(count($items) != 0){
-        \Excel::create('comisionados_autorizado_'.\Session::get('user.roles.1'), function($excel) use($items) {
-          $excel->sheet('File', function($sheet) use($items) {
-            $sheet->setAutoFilter('A1:AK1');
-            $sheet->setColumnFormat(array(
-                'Y:AK' => '"$"#,##0.00'
-            ));
-            $sheet->setAutoSize(array(
-              'A', 'B', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'W', 'X', 'Y', 'Z', 'AA'
-            ));
-            $sheet->setWidth(array(
-              'U' => 40,
-              'V' => 40,
-              'AB' => 20,
-              'AC' => 20,
-              'AD' => 20,
-              'AE' => 20,
-              'AF' => 20,
-              'AG' => 20,
-              'AH' => 20,
-              'AI' => 20,
-              'AJ' => 20,
-              'AK' => 20,
-            ));
-            $sheet->loadView('pdf.excel')->with('items', $items);
-          });
-        }, 'UTF-8')->export('xlsx');
-      }else{
-        flash('No hay datos para exportar!!!')->error();
-        return redirect(\URL::previous()); 
-      }
-    }elseif (\Session::get('user.roles')->contains('Viatinet_Dga') || (\Session::get('user.roles')->contains('Viatinet_supDga'))) {
-      if(count($items) != 0){
-        \Excel::create('comisionados_autorizado_'.\Session::get('user.roles.1'), function($excel) use($items) {
-          $excel->sheet('File', function($sheet) use($items) {
-            $sheet->setAutoFilter('A1:AK1');
-            $sheet->setColumnFormat(array(
-                'Y:AK' => '"$"#,##0.00'
-            ));
-            $sheet->setAutoSize(array(
-              'A', 'B', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'W', 'X', 'Y', 'Z', 'AA'
-            ));
-            $sheet->setWidth(array(
-              'U' => 40,
-              'V' => 40,
-              'AB' => 20,
-              'AC' => 20,
-              'AD' => 20,
-              'AE' => 20,
-              'AF' => 20,
-              'AG' => 20,
-              'AH' => 20,
-              'AI' => 20,
-              'AJ' => 20,
-              'AK' => 20,
-            ));
-            $sheet->loadView('pdf.excel')->with('items', $items);
-          });
-        }, 'UTF-8')->export('xlsx');
-      }else{
-        flash('No hay datos para exportar!!!')->error();
-        return redirect(\URL::previous()); 
-      }
-    }
-  }
+  // public function exportcsvAut(){
+  //   $items = $this->obtieneFichasAutorizadas();
+  //   if (\Session::get('user.roles')->contains('Viatinet_Operativo')) {
+  //     if(count($items) != 0){
+  //       \Excel::create('comisionados_autorizado_'.\Session::get('user.roles.1'), function($excel) use($items) {
+  //         $excel->sheet('File', function($sheet) use($items) {
+  //           $sheet->setAutoFilter('A1:AK1');
+  //           $sheet->setColumnFormat(array(
+  //               'Y:AK' => '"$"#,##0.00'
+  //           ));
+  //           $sheet->setAutoSize(array(
+  //             'A', 'B', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'W', 'X', 'Y', 'Z', 'AA'
+  //           ));
+  //           $sheet->setWidth(array(
+  //             'U' => 40,
+  //             'V' => 40,
+  //             'AB' => 20,
+  //             'AC' => 20,
+  //             'AD' => 20,
+  //             'AE' => 20,
+  //             'AF' => 20,
+  //             'AG' => 20,
+  //             'AH' => 20,
+  //             'AI' => 20,
+  //             'AJ' => 20,
+  //             'AK' => 20,
+  //           ));
+  //           $sheet->loadView('pdf.excel')->with('items', $items);
+  //         });
+  //       }, 'UTF-8')->export('xlsx');
+  //     }else{
+  //       flash('No hay datos para exportar!!!')->error();
+  //       return redirect(\URL::previous()); 
+  //     }
+  //   }elseif (\Session::get('user.roles')->contains('Viatinet_Titular') || (\Session::get('user.roles')->contains('Viatinet_supTitular'))) {
+  //     if(count($items) != 0){
+  //       \Excel::create('comisionados_autorizado_'.\Session::get('user.roles.1'), function($excel) use($items) {
+  //         $excel->sheet('File', function($sheet) use($items) {
+  //           $sheet->setAutoFilter('A1:AK1');
+  //           $sheet->setColumnFormat(array(
+  //               'Y:AK' => '"$"#,##0.00'
+  //           ));
+  //           $sheet->setAutoSize(array(
+  //             'A', 'B', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'W', 'X', 'Y', 'Z', 'AA'
+  //           ));
+  //           $sheet->setWidth(array(
+  //             'U' => 40,
+  //             'V' => 40,
+  //             'AB' => 20,
+  //             'AC' => 20,
+  //             'AD' => 20,
+  //             'AE' => 20,
+  //             'AF' => 20,
+  //             'AG' => 20,
+  //             'AH' => 20,
+  //             'AI' => 20,
+  //             'AJ' => 20,
+  //             'AK' => 20,
+  //           ));
+  //           $sheet->loadView('pdf.excel')->with('items', $items);
+  //         });
+  //       }, 'UTF-8')->export('xlsx');
+  //     }else{
+  //       flash('No hay datos para exportar!!!')->error();
+  //       return redirect(\URL::previous()); 
+  //     }
+  //   }elseif (\Session::get('user.roles')->contains('Viatinet_Dga') || (\Session::get('user.roles')->contains('Viatinet_supDga'))) {
+  //     if(count($items) != 0){
+  //       \Excel::create('comisionados_autorizado_'.\Session::get('user.roles.1'), function($excel) use($items) {
+  //         $excel->sheet('File', function($sheet) use($items) {
+  //           $sheet->setAutoFilter('A1:AK1');
+  //           $sheet->setColumnFormat(array(
+  //               'Y:AK' => '"$"#,##0.00'
+  //           ));
+  //           $sheet->setAutoSize(array(
+  //             'A', 'B', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'W', 'X', 'Y', 'Z', 'AA'
+  //           ));
+  //           $sheet->setWidth(array(
+  //             'U' => 40,
+  //             'V' => 40,
+  //             'AB' => 20,
+  //             'AC' => 20,
+  //             'AD' => 20,
+  //             'AE' => 20,
+  //             'AF' => 20,
+  //             'AG' => 20,
+  //             'AH' => 20,
+  //             'AI' => 20,
+  //             'AJ' => 20,
+  //             'AK' => 20,
+  //           ));
+  //           $sheet->loadView('pdf.excel')->with('items', $items);
+  //         });
+  //       }, 'UTF-8')->export('xlsx');
+  //     }else{
+  //       flash('No hay datos para exportar!!!')->error();
+  //       return redirect(\URL::previous()); 
+  //     }
+  //   }
+  // }
 
-  public function exportcsvRech(){
-    $items = $this->obtieneFichasRechazadas();
-    if (\Session::get('user.roles')->contains('Viatinet_Operativo')) {
-      if(count($items) != 0){
-        \Excel::create('comisionados_rechazados_'.\Session::get('user.roles.1'), function($excel) use($items) {
-          $excel->sheet('File', function($sheet) use($items) {
-            $sheet->setAutoFilter('A1:AK1');
-            $sheet->setColumnFormat(array(
-                'Y:AK' => '"$"#,##0.00'
-            ));
-            $sheet->setAutoSize(array(
-              'A', 'B', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'W', 'X', 'Y', 'Z', 'AA'
-            ));
-            $sheet->setWidth(array(
-              'U' => 40,
-              'V' => 40,
-              'AB' => 20,
-              'AC' => 20,
-              'AD' => 20,
-              'AE' => 20,
-              'AF' => 20,
-              'AG' => 20,
-              'AH' => 20,
-              'AI' => 20,
-              'AJ' => 20,
-              'AK' => 20,
-            ));
-            $sheet->loadView('pdf.excel')->with('items', $items);
-          });
-        }, 'UTF-8')->export('xlsx');
-      }else{
-        flash('No hay datos para exportar!!!')->error();
-        return redirect(\URL::previous()); 
-      }
-    }elseif (\Session::get('user.roles')->contains('Viatinet_Titular') || (\Session::get('user.roles')->contains('Viatinet_supTitular'))) {
-      if(count($items) != 0){
-        \Excel::create('comisionados_rechazados_'.\Session::get('user.roles.1'), function($excel) use($items) {
-          $excel->sheet('File', function($sheet) use($items) {
-            $sheet->setAutoFilter('A1:AK1');
-            $sheet->setColumnFormat(array(
-                'Y:AK' => '"$"#,##0.00'
-            ));
-            $sheet->setAutoSize(array(
-              'A', 'B', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'W', 'X', 'Y', 'Z', 'AA'
-            ));
-            $sheet->setWidth(array(
-              'U' => 40,
-              'V' => 40,
-              'AB' => 20,
-              'AC' => 20,
-              'AD' => 20,
-              'AE' => 20,
-              'AF' => 20,
-              'AG' => 20,
-              'AH' => 20,
-              'AI' => 20,
-              'AJ' => 20,
-              'AK' => 20,
-            ));
-            $sheet->loadView('pdf.excel')->with('items', $items);
-          });
-        }, 'UTF-8')->export('xlsx');
-      }else{
-        flash('No hay datos para exportar!!!')->error();
-        return redirect(\URL::previous()); 
-      }
-    }elseif (\Session::get('user.roles')->contains('Viatinet_Dga') || (\Session::get('user.roles')->contains('Viatinet_supDga'))) {
-      if(count($items) != 0){
-        \Excel::create('comisionados_rechazados_'.\Session::get('user.roles.1'), function($excel) use($items) {
-          $excel->sheet('File', function($sheet) use($items) {
-            $sheet->setAutoFilter('A1:AK1');
-            $sheet->setColumnFormat(array(
-                'Y:AK' => '"$"#,##0.00'
-            ));
-            $sheet->setAutoSize(array(
-              'A', 'B', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'W', 'X', 'Y', 'Z', 'AA'
-            ));
-            $sheet->setWidth(array(
-              'U' => 40,
-              'V' => 40,
-              'AB' => 20,
-              'AC' => 20,
-              'AD' => 20,
-              'AE' => 20,
-              'AF' => 20,
-              'AG' => 20,
-              'AH' => 20,
-              'AI' => 20,
-              'AJ' => 20,
-              'AK' => 20,
-            ));
-            $sheet->loadView('pdf.excel')->with('items', $items);
-          });
-        }, 'UTF-8')->export('xlsx');
-      }else{
-        flash('No hay datos para exportar!!!')->error();
-        return redirect(\URL::previous()); 
-      }
-    }
-  }
+  // public function exportcsvRech(){
+  //   $items = $this->obtieneFichasRechazadas();
+  //   if (\Session::get('user.roles')->contains('Viatinet_Operativo')) {
+  //     if(count($items) != 0){
+  //       \Excel::create('comisionados_rechazados_'.\Session::get('user.roles.1'), function($excel) use($items) {
+  //         $excel->sheet('File', function($sheet) use($items) {
+  //           $sheet->setAutoFilter('A1:AK1');
+  //           $sheet->setColumnFormat(array(
+  //               'Y:AK' => '"$"#,##0.00'
+  //           ));
+  //           $sheet->setAutoSize(array(
+  //             'A', 'B', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'W', 'X', 'Y', 'Z', 'AA'
+  //           ));
+  //           $sheet->setWidth(array(
+  //             'U' => 40,
+  //             'V' => 40,
+  //             'AB' => 20,
+  //             'AC' => 20,
+  //             'AD' => 20,
+  //             'AE' => 20,
+  //             'AF' => 20,
+  //             'AG' => 20,
+  //             'AH' => 20,
+  //             'AI' => 20,
+  //             'AJ' => 20,
+  //             'AK' => 20,
+  //           ));
+  //           $sheet->loadView('pdf.excel')->with('items', $items);
+  //         });
+  //       }, 'UTF-8')->export('xlsx');
+  //     }else{
+  //       flash('No hay datos para exportar!!!')->error();
+  //       return redirect(\URL::previous()); 
+  //     }
+  //   }elseif (\Session::get('user.roles')->contains('Viatinet_Titular') || (\Session::get('user.roles')->contains('Viatinet_supTitular'))) {
+  //     if(count($items) != 0){
+  //       \Excel::create('comisionados_rechazados_'.\Session::get('user.roles.1'), function($excel) use($items) {
+  //         $excel->sheet('File', function($sheet) use($items) {
+  //           $sheet->setAutoFilter('A1:AK1');
+  //           $sheet->setColumnFormat(array(
+  //               'Y:AK' => '"$"#,##0.00'
+  //           ));
+  //           $sheet->setAutoSize(array(
+  //             'A', 'B', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'W', 'X', 'Y', 'Z', 'AA'
+  //           ));
+  //           $sheet->setWidth(array(
+  //             'U' => 40,
+  //             'V' => 40,
+  //             'AB' => 20,
+  //             'AC' => 20,
+  //             'AD' => 20,
+  //             'AE' => 20,
+  //             'AF' => 20,
+  //             'AG' => 20,
+  //             'AH' => 20,
+  //             'AI' => 20,
+  //             'AJ' => 20,
+  //             'AK' => 20,
+  //           ));
+  //           $sheet->loadView('pdf.excel')->with('items', $items);
+  //         });
+  //       }, 'UTF-8')->export('xlsx');
+  //     }else{
+  //       flash('No hay datos para exportar!!!')->error();
+  //       return redirect(\URL::previous()); 
+  //     }
+  //   }elseif (\Session::get('user.roles')->contains('Viatinet_Dga') || (\Session::get('user.roles')->contains('Viatinet_supDga'))) {
+  //     if(count($items) != 0){
+  //       \Excel::create('comisionados_rechazados_'.\Session::get('user.roles.1'), function($excel) use($items) {
+  //         $excel->sheet('File', function($sheet) use($items) {
+  //           $sheet->setAutoFilter('A1:AK1');
+  //           $sheet->setColumnFormat(array(
+  //               'Y:AK' => '"$"#,##0.00'
+  //           ));
+  //           $sheet->setAutoSize(array(
+  //             'A', 'B', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'W', 'X', 'Y', 'Z', 'AA'
+  //           ));
+  //           $sheet->setWidth(array(
+  //             'U' => 40,
+  //             'V' => 40,
+  //             'AB' => 20,
+  //             'AC' => 20,
+  //             'AD' => 20,
+  //             'AE' => 20,
+  //             'AF' => 20,
+  //             'AG' => 20,
+  //             'AH' => 20,
+  //             'AI' => 20,
+  //             'AJ' => 20,
+  //             'AK' => 20,
+  //           ));
+  //           $sheet->loadView('pdf.excel')->with('items', $items);
+  //         });
+  //       }, 'UTF-8')->export('xlsx');
+  //     }else{
+  //       flash('No hay datos para exportar!!!')->error();
+  //       return redirect(\URL::previous()); 
+  //     }
+  //   }
+  // }
 
-  public function observacionesTitular(Request $request){
-    $user = 'Titular';
-    $viatico = \Session::get('_id');
-    $observacionDC = $request->input('commentDetalleComision');
-    $observacionRP = $request->input('commentRegistroPersonal');
-    $guardaTipo = $request->input('guardaTipo');
-    $util = new Utilidades();
-    if ($guardaTipo == 'nacional') { $etapa = 'registroPersonalNacional'; }else{$etapa = 'registroPersonalInternacional'; } 
-    if ($observacionDC != '' && $observacionRP != '' || $observacionDC != '' || $observacionRP != '') {
-      if ($request->checkboxDetalleComision == true && $request->checkboxRegistroPersonal == true) {
-        $parametros = [
-          'security' => [      
-            'sessionId' => \Session::get('sessionId')
-          ],
-          'data' => [
-            'idViatico' => $viatico,          
-            'etapa' => 'detalleComision',
-            'responsable' => $user,
-            'observaciones' => $observacionDC,  
-          ]
-        ];
-        $parametros2 = [
-          'security' => [      
-            'sessionId' => \Session::get('sessionId')
-          ],
-          'data' => [
-            'idViatico' => $viatico,          
-            'etapa' => $etapa,
-            'responsable' => $user,
-            'observaciones' => $observacionRP,
-          ]
-        ];
-        // dd(json_encode([$parametros, $parametros2]));
-        $json = $util->muleConnection('POST','/viaticos/statusBwd',10010,$parametros);
-        // dd($json);
-        if ($json['error']['code'] == 0) {
-          $json2 = $util->muleConnection('POST','/viaticos/statusBwd',10010,$parametros2);
-          if ($json2['error']['code'] == 0) {
-            flash($json2['error']['msg']);
-            return redirect('/rechazadoTitular');
-          }else{
-            flash($json2['error']['msg'])->error();
-            return redirect(\URL::previous());          
-          }
-        }else{
-          flash($json['error']['msg'])->error();
-          return redirect(\URL::previous()); 
-        }
-      }elseif ($request->checkboxDetalleComision == true && $request->checkboxRegistroPersonal == false) {
-        $parametros = [
-          'security' => [      
-            'sessionId' => \Session::get('sessionId')
-          ],
-          'data' => [
-            'idViatico' => $viatico,          
-            'etapa' => 'detalleComision',
-            'responsable' => $user,
-            'observaciones' => $observacionDC,  
-          ]
-        ];
-        $json = $util->muleConnection('POST','/viaticos/statusBwd',10010,$parametros);
-        if ($json['error']['code'] == 0) {
-          flash($json['error']['msg']);
-          return redirect('/rechazadoTitular');
-        }else{
-          flash($json['error']['msg'])->error();
-          return redirect(\URL::previous());      
-        }
-      }elseif ($request->checkboxDetalleComision == false && $request->checkboxRegistroPersonal == true) {
-        $parametros = [
-          'security' => [      
-            'sessionId' => \Session::get('sessionId')
-          ],
-          'data' => [
-            'idViatico' => $viatico,          
-            'etapa' => $etapa,
-            'responsable' => $user,
-            'observaciones' => $observacionRP,
-          ]
-        ];
-        $json = $util->muleConnection('POST','/viaticos/statusBwd',10010,$parametros);
-        if ($json['error']['code'] == 0) {
-          flash($json['error']['msg']);
-          return redirect('/rechazadoTitular');
-        }else{
-          flash($json['error']['msg'])->error();
-          return redirect(\URL::previous());          
-        }        
-      }
-    }else{
-      flash('Error verifica los campos vacios!!!')->error();
-      return redirect(\URL::previous());
-    }
-  }
+  // public function observacionesTitular(Request $request){
+  //   $user = 'Titular';
+  //   $viatico = \Session::get('_id');
+  //   $observacionDC = $request->input('commentDetalleComision');
+  //   $observacionRP = $request->input('commentRegistroPersonal');
+  //   $guardaTipo = $request->input('guardaTipo');
+  //   $util = new Utilidades();
+  //   if ($guardaTipo == 'nacional') { $etapa = 'registroPersonalNacional'; }else{$etapa = 'registroPersonalInternacional'; } 
+  //   if ($observacionDC != '' && $observacionRP != '' || $observacionDC != '' || $observacionRP != '') {
+  //     if ($request->checkboxDetalleComision == true && $request->checkboxRegistroPersonal == true) {
+  //       $parametros = [
+  //         'security' => [      
+  //           'sessionId' => \Session::get('sessionId')
+  //         ],
+  //         'data' => [
+  //           'idViatico' => $viatico,          
+  //           'etapa' => 'detalleComision',
+  //           'responsable' => $user,
+  //           'observaciones' => $observacionDC,  
+  //         ]
+  //       ];
+  //       $parametros2 = [
+  //         'security' => [      
+  //           'sessionId' => \Session::get('sessionId')
+  //         ],
+  //         'data' => [
+  //           'idViatico' => $viatico,          
+  //           'etapa' => $etapa,
+  //           'responsable' => $user,
+  //           'observaciones' => $observacionRP,
+  //         ]
+  //       ];
+  //       // dd(json_encode([$parametros, $parametros2]));
+  //       $json = $util->muleConnection('POST','/viaticos/statusBwd',10010,$parametros);
+  //       // dd($json);
+  //       if ($json['error']['code'] == 0) {
+  //         $json2 = $util->muleConnection('POST','/viaticos/statusBwd',10010,$parametros2);
+  //         if ($json2['error']['code'] == 0) {
+  //           flash($json2['error']['msg']);
+  //           return redirect('/rechazadoTitular');
+  //         }else{
+  //           flash($json2['error']['msg'])->error();
+  //           return redirect(\URL::previous());          
+  //         }
+  //       }else{
+  //         flash($json['error']['msg'])->error();
+  //         return redirect(\URL::previous()); 
+  //       }
+  //     }elseif ($request->checkboxDetalleComision == true && $request->checkboxRegistroPersonal == false) {
+  //       $parametros = [
+  //         'security' => [      
+  //           'sessionId' => \Session::get('sessionId')
+  //         ],
+  //         'data' => [
+  //           'idViatico' => $viatico,          
+  //           'etapa' => 'detalleComision',
+  //           'responsable' => $user,
+  //           'observaciones' => $observacionDC,  
+  //         ]
+  //       ];
+  //       $json = $util->muleConnection('POST','/viaticos/statusBwd',10010,$parametros);
+  //       if ($json['error']['code'] == 0) {
+  //         flash($json['error']['msg']);
+  //         return redirect('/rechazadoTitular');
+  //       }else{
+  //         flash($json['error']['msg'])->error();
+  //         return redirect(\URL::previous());      
+  //       }
+  //     }elseif ($request->checkboxDetalleComision == false && $request->checkboxRegistroPersonal == true) {
+  //       $parametros = [
+  //         'security' => [      
+  //           'sessionId' => \Session::get('sessionId')
+  //         ],
+  //         'data' => [
+  //           'idViatico' => $viatico,          
+  //           'etapa' => $etapa,
+  //           'responsable' => $user,
+  //           'observaciones' => $observacionRP,
+  //         ]
+  //       ];
+  //       $json = $util->muleConnection('POST','/viaticos/statusBwd',10010,$parametros);
+  //       if ($json['error']['code'] == 0) {
+  //         flash($json['error']['msg']);
+  //         return redirect('/rechazadoTitular');
+  //       }else{
+  //         flash($json['error']['msg'])->error();
+  //         return redirect(\URL::previous());          
+  //       }        
+  //     }
+  //   }else{
+  //     flash('Error verifica los campos vacios!!!')->error();
+  //     return redirect(\URL::previous());
+  //   }
+  // }
 
-  public function observacionesDga(Request $request){
-    $user = 'DGA';
-    $viatico = \Session::get('_id');
-    $observacionDC = $request->input('commentDetalleComision');
-    $observacionRP = $request->input('commentRegistroPersonal');
-    $guardaTipo = $request->input('guardaTipo');
-    $util = new Utilidades();
-    if ($guardaTipo == 'nacional') { $etapa = 'registroPersonalNacional'; }else{$etapa = 'registroPersonalInternacional'; } 
-    if ($observacionDC != '' && $observacionRP != '' || $observacionDC != '' || $observacionRP != '') {
-      if ($request->checkboxDetalleComision == true && $request->checkboxRegistroPersonal == true) {
-        $parametros = [
-          'security' => [      
-            'sessionId' => \Session::get('sessionId')
-          ],
-          'data' => [
-            'idViatico' => $viatico,
-            'etapa' => 'detalleComision',
-            'responsable' => $user,
-            'observaciones' => $observacionDC,
-          ]
-        ];
-        $parametros2 = [
-          'security' => [      
-            'sessionId' => \Session::get('sessionId')
-          ],
-          'data' => [
-            'idViatico' => $viatico,          
-            'etapa' => $etapa,
-            'responsable' => $user,
-            'observaciones' => $observacionRP,
-          ]
-        ];
-        $json = $util->muleConnection('POST','/viaticos/statusBwd',10010, $parametros);
-        // dd($json);
-        if ($json['error']['code'] == 0) {
-          $json2 = $util->muleConnection('POST','/viaticos/statusBwd',10010,$parametros2);
-          if ($json2['error']['code'] == 0) {
-            flash($json2['error']['msg']);
-            return redirect('/rechazadoDga');
-          }else{
-            flash($json2['error']['msg'])->error();
-            return redirect(\URL::previous());          
-          }
-        }else{
-          flash($json['error']['msg'])->error();
-          return redirect(\URL::previous()); 
-        }
-      }elseif ($request->checkboxDetalleComision == true && $request->checkboxRegistroPersonal == false) {
-        $parametros = [
-          'security' => [      
-            'sessionId' => \Session::get('sessionId')
-          ],
-          'data' => [
-            'idViatico' => $viatico,          
-            'etapa' => 'detalleComision',
-            'responsable' => $user,
-            'observaciones' => $observacionDC,  
-          ]
-        ];
-        $json = $util->muleConnection('POST','/viaticos/statusBwd',10010,$parametros);
-        if ($json['error']['code'] == 0) {
-          flash($json['error']['msg']);
-          return redirect('/rechazadoDga');
-        }else{
-          flash($json['error']['msg'])->error();
-          return redirect(\URL::previous());         
-        }
-      }elseif ($request->checkboxDetalleComision == false && $request->checkboxRegistroPersonal == true) {
-        $parametros = [
-          'security' => [      
-            'sessionId' => \Session::get('sessionId')
-          ],
-          'data' => [
-            'idViatico' => $viatico,          
-            'etapa' => $etapa,
-            'responsable' => $user,
-            'observaciones' => $observacionRP,
-          ]
-        ];
-        $json = $util->muleConnection('POST','/viaticos/statusBwd',10010,$parametros);
-        if ($json['error']['code'] == 0) {
-          flash($json['error']['msg']);
-          return redirect('/rechazadoDga');
-        }else{
-          flash($json['error']['msg'])->error();
-          return redirect(\URL::previous());           
-        }        
-      }
-    }else{
-      flash('Error verifica los campos vacios!!!')->error();
-      return redirect(\URL::previous());
-    }
-  }
+  // public function observacionesDga(Request $request){
+  //   $user = 'DGA';
+  //   $viatico = \Session::get('_id');
+  //   $observacionDC = $request->input('commentDetalleComision');
+  //   $observacionRP = $request->input('commentRegistroPersonal');
+  //   $guardaTipo = $request->input('guardaTipo');
+  //   $util = new Utilidades();
+  //   if ($guardaTipo == 'nacional') { $etapa = 'registroPersonalNacional'; }else{$etapa = 'registroPersonalInternacional'; } 
+  //   if ($observacionDC != '' && $observacionRP != '' || $observacionDC != '' || $observacionRP != '') {
+  //     if ($request->checkboxDetalleComision == true && $request->checkboxRegistroPersonal == true) {
+  //       $parametros = [
+  //         'security' => [      
+  //           'sessionId' => \Session::get('sessionId')
+  //         ],
+  //         'data' => [
+  //           'idViatico' => $viatico,
+  //           'etapa' => 'detalleComision',
+  //           'responsable' => $user,
+  //           'observaciones' => $observacionDC,
+  //         ]
+  //       ];
+  //       $parametros2 = [
+  //         'security' => [      
+  //           'sessionId' => \Session::get('sessionId')
+  //         ],
+  //         'data' => [
+  //           'idViatico' => $viatico,          
+  //           'etapa' => $etapa,
+  //           'responsable' => $user,
+  //           'observaciones' => $observacionRP,
+  //         ]
+  //       ];
+  //       $json = $util->muleConnection('POST','/viaticos/statusBwd',10010, $parametros);
+  //       // dd($json);
+  //       if ($json['error']['code'] == 0) {
+  //         $json2 = $util->muleConnection('POST','/viaticos/statusBwd',10010,$parametros2);
+  //         if ($json2['error']['code'] == 0) {
+  //           flash($json2['error']['msg']);
+  //           return redirect('/rechazadoDga');
+  //         }else{
+  //           flash($json2['error']['msg'])->error();
+  //           return redirect(\URL::previous());          
+  //         }
+  //       }else{
+  //         flash($json['error']['msg'])->error();
+  //         return redirect(\URL::previous()); 
+  //       }
+  //     }elseif ($request->checkboxDetalleComision == true && $request->checkboxRegistroPersonal == false) {
+  //       $parametros = [
+  //         'security' => [      
+  //           'sessionId' => \Session::get('sessionId')
+  //         ],
+  //         'data' => [
+  //           'idViatico' => $viatico,          
+  //           'etapa' => 'detalleComision',
+  //           'responsable' => $user,
+  //           'observaciones' => $observacionDC,  
+  //         ]
+  //       ];
+  //       $json = $util->muleConnection('POST','/viaticos/statusBwd',10010,$parametros);
+  //       if ($json['error']['code'] == 0) {
+  //         flash($json['error']['msg']);
+  //         return redirect('/rechazadoDga');
+  //       }else{
+  //         flash($json['error']['msg'])->error();
+  //         return redirect(\URL::previous());         
+  //       }
+  //     }elseif ($request->checkboxDetalleComision == false && $request->checkboxRegistroPersonal == true) {
+  //       $parametros = [
+  //         'security' => [      
+  //           'sessionId' => \Session::get('sessionId')
+  //         ],
+  //         'data' => [
+  //           'idViatico' => $viatico,          
+  //           'etapa' => $etapa,
+  //           'responsable' => $user,
+  //           'observaciones' => $observacionRP,
+  //         ]
+  //       ];
+  //       $json = $util->muleConnection('POST','/viaticos/statusBwd',10010,$parametros);
+  //       if ($json['error']['code'] == 0) {
+  //         flash($json['error']['msg']);
+  //         return redirect('/rechazadoDga');
+  //       }else{
+  //         flash($json['error']['msg'])->error();
+  //         return redirect(\URL::previous());           
+  //       }        
+  //     }
+  //   }else{
+  //     flash('Error verifica los campos vacios!!!')->error();
+  //     return redirect(\URL::previous());
+  //   }
+  // }
 
-  public function muestraPDFFirmaTitular(Request $request){
-    $util = new Utilidades();
-    $session = \Session::get('sessionId');
-    $viatico = $request->input('docId');
-    $json = $util->muleConnection('GET','/viaticos/schemaViaticos?token='.$session.'&viatico='.$viatico, 10010);
-    if ($json['error']['code'] == 0) {
-      $dirPath = '/'.'viaticos'.'/'.$json['data']['detalleComision']['nombre'].'/'.$json['data']['_id'].'/';
-      $baseName = $json['data']['_id'].'firmado.pdf';
-      $parametros = [
-        'data' => [
-          'nombreDir' => $dirPath,
-          'separador'=>'/',
-          'archivoenv'=>[$baseName]
-        ]
-      ];
-      $retorno = $util->muleConnection('POST','/viaticos/copyFileStorageToView',10010,$parametros);
-      if($retorno['error']['code'] == 0){
-        if(\Storage::disk('files')->exists('descarga'.$dirPath.'/'.$baseName)){
-          $pdf = base64_encode(\Storage::disk('files')->get('descarga'.$dirPath.'/'.$baseName));
-        }else{ 
-          $pdf = base64_encode(\PDF::loadHTML(\View::make('errors.pdfNotFound'))->setWarnings(false)->stream());
-        }
-        return ['pdf'=>$pdf];
-      }else{
-        return ['error'=>['code'=>1,'msg'=>$retorno['error']['msg']],'color'=>'#C6383D'];      
-      }
-    }else{
-      return ['error'=>['code'=>1,'msg'=>$json['error']['msg']],'color'=>'#C6383D'];
-    }
-  }
+  // public function muestraPDFFirmaTitular(Request $request){
+  //   $util = new Utilidades();
+  //   $session = \Session::get('sessionId');
+  //   $viatico = $request->input('docId');
+  //   $json = $util->muleConnection('GET','/viaticos/schemaViaticos?token='.$session.'&viatico='.$viatico, 10010);
+  //   if ($json['error']['code'] == 0) {
+  //     $dirPath = '/'.'viaticos'.'/'.$json['data']['detalleComision']['nombre'].'/'.$json['data']['_id'].'/';
+  //     $baseName = $json['data']['_id'].'firmado.pdf';
+  //     $parametros = [
+  //       'data' => [
+  //         'nombreDir' => $dirPath,
+  //         'separador'=>'/',
+  //         'archivoenv'=>[$baseName]
+  //       ]
+  //     ];
+  //     $retorno = $util->muleConnection('POST','/viaticos/copyFileStorageToView',10010,$parametros);
+  //     if($retorno['error']['code'] == 0){
+  //       if(\Storage::disk('files')->exists('descarga'.$dirPath.'/'.$baseName)){
+  //         $pdf = base64_encode(\Storage::disk('files')->get('descarga'.$dirPath.'/'.$baseName));
+  //       }else{ 
+  //         $pdf = base64_encode(\PDF::loadHTML(\View::make('errors.pdfNotFound'))->setWarnings(false)->stream());
+  //       }
+  //       return ['pdf'=>$pdf];
+  //     }else{
+  //       return ['error'=>['code'=>1,'msg'=>$retorno['error']['msg']],'color'=>'#C6383D'];      
+  //     }
+  //   }else{
+  //     return ['error'=>['code'=>1,'msg'=>$json['error']['msg']],'color'=>'#C6383D'];
+  //   }
+  // }
 
-  public function muestraPDFAutorizado(Request $request){
-    $util = new Utilidades();
-    $session = \Session::get('sessionId');
-    $viatico = $request->input('docId');
-    $json = $util->muleConnection('GET','/viaticos/schemaViaticos?token='.$session.'&viatico='.$viatico, 10010);
-    if ($json['error']['code'] == 0) {
-      $dirPath = '/'.'viaticos'.'/'.$json['data']['detalleComision']['nombre'].'/'.$json['data']['_id'].'/';
-      $baseName = $json['data']['_id'].'Titularfirmado.pdf';
-      $parametros = [
-        'data' => [
-          'nombreDir' => $dirPath,
-          'separador'=>'/',
-          'archivoenv'=>[$baseName]
-        ]
-      ];
-      $retorno = $util->muleConnection('POST','/viaticos/copyFileStorageToView',10010,$parametros);
-      if($retorno['error']['code'] == 0){
-        if(\Storage::disk('files')->exists('descarga'.$dirPath.'/'.$baseName)){
-          $pdf = base64_encode(\Storage::disk('files')->get('descarga'.$dirPath.'/'.$baseName));
-        }else{ 
-          $pdf = base64_encode(\PDF::loadHTML(\View::make('errors.pdfNotFound'))->setWarnings(false)->stream());
-        }
-        return ['pdf'=>$pdf];
-      }else{
-        return ['error'=>['code'=>1,'msg'=>$retorno['error']['msg']],'color'=>'#C6383D'];      
-      }
-    }else{
-      return ['error'=>['code'=>1,'msg'=>$json['error']['msg']],'color'=>'#C6383D'];
-    }
-  }
+  // public function muestraPDFAutorizado(Request $request){
+  //   $util = new Utilidades();
+  //   $session = \Session::get('sessionId');
+  //   $viatico = $request->input('docId');
+  //   $json = $util->muleConnection('GET','/viaticos/schemaViaticos?token='.$session.'&viatico='.$viatico, 10010);
+  //   if ($json['error']['code'] == 0) {
+  //     $dirPath = '/'.'viaticos'.'/'.$json['data']['detalleComision']['nombre'].'/'.$json['data']['_id'].'/';
+  //     $baseName = $json['data']['_id'].'Titularfirmado.pdf';
+  //     $parametros = [
+  //       'data' => [
+  //         'nombreDir' => $dirPath,
+  //         'separador'=>'/',
+  //         'archivoenv'=>[$baseName]
+  //       ]
+  //     ];
+  //     $retorno = $util->muleConnection('POST','/viaticos/copyFileStorageToView',10010,$parametros);
+  //     if($retorno['error']['code'] == 0){
+  //       if(\Storage::disk('files')->exists('descarga'.$dirPath.'/'.$baseName)){
+  //         $pdf = base64_encode(\Storage::disk('files')->get('descarga'.$dirPath.'/'.$baseName));
+  //       }else{ 
+  //         $pdf = base64_encode(\PDF::loadHTML(\View::make('errors.pdfNotFound'))->setWarnings(false)->stream());
+  //       }
+  //       return ['pdf'=>$pdf];
+  //     }else{
+  //       return ['error'=>['code'=>1,'msg'=>$retorno['error']['msg']],'color'=>'#C6383D'];      
+  //     }
+  //   }else{
+  //     return ['error'=>['code'=>1,'msg'=>$json['error']['msg']],'color'=>'#C6383D'];
+  //   }
+  // }
 
-  public function muestraPDFFirmaDga(Request $request){
-    $util = new Utilidades();
-    $session = \Session::get('sessionId');
-    $viatico = $request->input('docId');
-    $json = $util->muleConnection('GET','/viaticos/schemaViaticos?token='.$session.'&viatico='.$viatico, 10010);
-    if ($json['error']['code'] == 0) {
-      $dirPath = '/'.'viaticos'.'/'.$json['data']['detalleComision']['nombre'].'/'.$json['data']['_id'].'/';
-      $baseName = $json['data']['_id'].'firmado.pdf';
-      $parametros = [
-        'data' => [
-          'nombreDir' => $dirPath,
-          'separador'=>'/',
-          'archivoenv'=>[$baseName]
-        ]
-      ];
-      $retorno = $util->muleConnection('POST','/viaticos/copyFileStorageToView',10010,$parametros);
-      if($retorno['error']['code'] == 0){
-        if(\Storage::disk('files')->exists('descarga'.$dirPath.'/'.$baseName)){
-          $pdf = base64_encode(\Storage::disk('files')->get('descarga'.$dirPath.'/'.$baseName));
-        }else{ 
-          $pdf = base64_encode(\PDF::loadHTML(\View::make('errors.pdfNotFound'))->setWarnings(false)->stream());
-        }
-        return ['pdf'=>$pdf];
-      }else{
-        return ['error'=>['code'=>1,'msg'=>$retorno['error']['msg']],'color'=>'#C6383D'];      
-      }
-    }else{
-      return ['error'=>['code'=>1,'msg'=>$json['error']['msg']],'color'=>'#C6383D'];
-    }
-  }
+  // public function muestraPDFFirmaDga(Request $request){
+  //   $util = new Utilidades();
+  //   $session = \Session::get('sessionId');
+  //   $viatico = $request->input('docId');
+  //   $json = $util->muleConnection('GET','/viaticos/schemaViaticos?token='.$session.'&viatico='.$viatico, 10010);
+  //   if ($json['error']['code'] == 0) {
+  //     $dirPath = '/'.'viaticos'.'/'.$json['data']['detalleComision']['nombre'].'/'.$json['data']['_id'].'/';
+  //     $baseName = $json['data']['_id'].'firmado.pdf';
+  //     $parametros = [
+  //       'data' => [
+  //         'nombreDir' => $dirPath,
+  //         'separador'=>'/',
+  //         'archivoenv'=>[$baseName]
+  //       ]
+  //     ];
+  //     $retorno = $util->muleConnection('POST','/viaticos/copyFileStorageToView',10010,$parametros);
+  //     if($retorno['error']['code'] == 0){
+  //       if(\Storage::disk('files')->exists('descarga'.$dirPath.'/'.$baseName)){
+  //         $pdf = base64_encode(\Storage::disk('files')->get('descarga'.$dirPath.'/'.$baseName));
+  //       }else{ 
+  //         $pdf = base64_encode(\PDF::loadHTML(\View::make('errors.pdfNotFound'))->setWarnings(false)->stream());
+  //       }
+  //       return ['pdf'=>$pdf];
+  //     }else{
+  //       return ['error'=>['code'=>1,'msg'=>$retorno['error']['msg']],'color'=>'#C6383D'];      
+  //     }
+  //   }else{
+  //     return ['error'=>['code'=>1,'msg'=>$json['error']['msg']],'color'=>'#C6383D'];
+  //   }
+  // }
 
-  public function autorizaDGA(Request $request){
-    if(\Session::has('firmaactiva')){
-      $util = new Utilidades();
-      $viatico = $request->input('docId');
-      $tipoViatico = $request->input('nombre');
-      $dirPath = '/'.'viaticos'.'/'.$tipoViatico.'/'.$viatico.'/';
-      $nameFirmado = $viatico.'firmado.pdf';
-      $nameFirmadoTitular = $viatico.'Titular.pdf';
-      $pathTitular = $dirPath.$nameFirmadoTitular;
-      $rutaCompleta='/var/www/html/virtual/viaticos/files/plataforma/descarga/viaticos/'.$tipoViatico.'/'.$viatico.'/';
-      \Storage::disk('files')->put($pathTitular,\File::get($rutaCompleta.$nameFirmado));
-      $parametros = [
-        "data"=>[
-              "nombreDir"=> $dirPath, 
-              "separador"=>"/", 
-              "archivoenv"=>[$nameFirmadoTitular]
-              ]
-      ];
-      $json = $util->muleConnection('POST','/viaticos/moveFileViewToMule',10010,$parametros);
-      if ($json['error']['code'] == 0) {
-        $parametros = [
-          'security' => ['cdmxId'=>\Session::get('cdmxId')],
-          // 'security' => ['cdmxId'=>'0IJDINSXY2ER1N5-781WSQ0U2003039'],
-          'data' => ['system' => 'Viatinet',
-            'pathrelativo' => '',
-            'password' => \Session::get('password') ,
-            'nombre' => $dirPath.$nameFirmadoTitular,
-            'byteKey'=> \Session::get('bytekey'),
-            'bytecer' => \Session::get('bytecer'), 
-            'tipofirma' => '1'
-          ]
-        ];
-        $json = $util->muleConnection('POST','/externs/signedFIELCDMX',9005,$parametros);
-        if ($json['error']['code'] == 0) {
-          $parametros = [
-            'data' => ['nombreDir' => $dirPath,
-               'separador' => '/',
-               'archivoenv' => [$viatico.'Titularfirmado.pdf']
-            ]
-          ];
-          $json = $util->muleConnection('POST','/viaticos/moveFileMuleToStorage',10010,$parametros);
-            if ($json['error']['code'] == 0) {
-              $retorno = $util->muleConnection('GET','/viaticos/statusFwd?token='.\Session::get('sessionId').'&viatico='.$viatico,10010);
-              if($retorno['error']['code']==0){
-                return ['error'=>['code'=>0,'msg'=>'Se ha finalizado el proceso correctamente'],'color'=>'blue'];
-              }else{
-                return ['error'=>['code'=>1,'msg'=>'Ha fallado el proceso de firmado'],'color'=>'#C6383D'];
-              }
-            }else{
-              return ['error'=>['code'=>3,'msg'=>'Ha fallado el proceso de firmado'],'color'=>'#C6383D'];
-            }
-        }else{
-           return ['error'=>['code'=>4,'msg'=>'Ha fallado el proceso de firmado'],'color'=>'#C6383D'];
-         }
-      }else{
-        return ['error'=>['code'=>5,'msg'=>'Ha fallado el proceso de firmado'],'color'=>'#C6383D'];
-      }
-    }else{
-      return ['error'=>['code'=>1,'msg'=>'No haz cargado la Firma Electrónica'],'color'=>'#C6383D'];
-    }
-  }
+  // public function autorizaDGA(Request $request){
+  //   if(\Session::has('firmaactiva')){
+  //     $util = new Utilidades();
+  //     $viatico = $request->input('docId');
+  //     $tipoViatico = $request->input('nombre');
+  //     $dirPath = '/'.'viaticos'.'/'.$tipoViatico.'/'.$viatico.'/';
+  //     $nameFirmado = $viatico.'firmado.pdf';
+  //     $nameFirmadoTitular = $viatico.'Titular.pdf';
+  //     $pathTitular = $dirPath.$nameFirmadoTitular;
+  //     $rutaCompleta='/var/www/html/virtual/viaticos/files/plataforma/descarga/viaticos/'.$tipoViatico.'/'.$viatico.'/';
+  //     \Storage::disk('files')->put($pathTitular,\File::get($rutaCompleta.$nameFirmado));
+  //     $parametros = [
+  //       "data"=>[
+  //             "nombreDir"=> $dirPath, 
+  //             "separador"=>"/", 
+  //             "archivoenv"=>[$nameFirmadoTitular]
+  //             ]
+  //     ];
+  //     $json = $util->muleConnection('POST','/viaticos/moveFileViewToMule',10010,$parametros);
+  //     if ($json['error']['code'] == 0) {
+  //       $parametros = [
+  //         'security' => ['cdmxId'=>\Session::get('cdmxId')],
+  //         // 'security' => ['cdmxId'=>'0IJDINSXY2ER1N5-781WSQ0U2003039'],
+  //         'data' => ['system' => 'Viatinet',
+  //           'pathrelativo' => '',
+  //           'password' => \Session::get('password') ,
+  //           'nombre' => $dirPath.$nameFirmadoTitular,
+  //           'byteKey'=> \Session::get('bytekey'),
+  //           'bytecer' => \Session::get('bytecer'), 
+  //           'tipofirma' => '1'
+  //         ]
+  //       ];
+  //       $json = $util->muleConnection('POST','/externs/signedFIELCDMX',9005,$parametros);
+  //       if ($json['error']['code'] == 0) {
+  //         $parametros = [
+  //           'data' => ['nombreDir' => $dirPath,
+  //              'separador' => '/',
+  //              'archivoenv' => [$viatico.'Titularfirmado.pdf']
+  //           ]
+  //         ];
+  //         $json = $util->muleConnection('POST','/viaticos/moveFileMuleToStorage',10010,$parametros);
+  //           if ($json['error']['code'] == 0) {
+  //             $retorno = $util->muleConnection('GET','/viaticos/statusFwd?token='.\Session::get('sessionId').'&viatico='.$viatico,10010);
+  //             if($retorno['error']['code']==0){
+  //               return ['error'=>['code'=>0,'msg'=>'Se ha finalizado el proceso correctamente'],'color'=>'blue'];
+  //             }else{
+  //               return ['error'=>['code'=>1,'msg'=>'Ha fallado el proceso de firmado'],'color'=>'#C6383D'];
+  //             }
+  //           }else{
+  //             return ['error'=>['code'=>3,'msg'=>'Ha fallado el proceso de firmado'],'color'=>'#C6383D'];
+  //           }
+  //       }else{
+  //          return ['error'=>['code'=>4,'msg'=>'Ha fallado el proceso de firmado'],'color'=>'#C6383D'];
+  //        }
+  //     }else{
+  //       return ['error'=>['code'=>5,'msg'=>'Ha fallado el proceso de firmado'],'color'=>'#C6383D'];
+  //     }
+  //   }else{
+  //     return ['error'=>['code'=>1,'msg'=>'No haz cargado la Firma Electrónica'],'color'=>'#C6383D'];
+  //   }
+  // }
 
-  public function getDetailPDF(Request $request){
-    if ($request->type != 'Autorizado') {
-      $documento = new Self();
-      $request->docId = $request->docId;
-      $respuesta = $documento->muestraPDFFirmaTitular($request);
-      return \Response::make(base64_decode($respuesta['pdf']),'200',array(
-        'Content-Type'=>'application/octet-stream',
-        'Content-Disposition' => 'attachment;filename="'.$request->docId.'.pdf"'
-      ));
-    }else{
-      $documento = new Self();
-      $request->docId = $request->docId;
-      $respuesta = $documento->muestraPDFAutorizado($request);
-      return \Response::make(base64_decode($respuesta['pdf']),'200',array(
-        'Content-Type'=>'application/octet-stream',
-        'Content-Disposition' => 'attachment;filename="'.$request->docId.'.pdf"'
-      ));
-    }
-  }
+  // public function getDetailPDF(Request $request){
+  //   if ($request->type != 'Autorizado') {
+  //     $documento = new Self();
+  //     $request->docId = $request->docId;
+  //     $respuesta = $documento->muestraPDFFirmaTitular($request);
+  //     return \Response::make(base64_decode($respuesta['pdf']),'200',array(
+  //       'Content-Type'=>'application/octet-stream',
+  //       'Content-Disposition' => 'attachment;filename="'.$request->docId.'.pdf"'
+  //     ));
+  //   }else{
+  //     $documento = new Self();
+  //     $request->docId = $request->docId;
+  //     $respuesta = $documento->muestraPDFAutorizado($request);
+  //     return \Response::make(base64_decode($respuesta['pdf']),'200',array(
+  //       'Content-Type'=>'application/octet-stream',
+  //       'Content-Disposition' => 'attachment;filename="'.$request->docId.'.pdf"'
+  //     ));
+  //   }
+  // }
+
 }

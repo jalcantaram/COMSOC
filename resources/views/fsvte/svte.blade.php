@@ -167,28 +167,35 @@
           <table id="fichas" class="table table-striped table-bordered" cellspacing="0" width="100%">
             <thead>
               <tr>
-                <th style="display: none;">ID</th>
                 <th>Folio</th>
                 <th>Tipo</th>
                 <th>Fecha registro</th>
                 <th>Status</th>
                 <th>Detalle</th>
-                @if(Session::get('user.roles.1') == 'Viatinet_Operativo')
+                @if(Session::get('user.roles.1') == 'Comsoc_Operativo')
                   <th>Edita</th>
                   <th>Detalle</th>                      
-                @elseif(Session::get('user.roles.1') == 'Viatinet_Titular' || Session::get('user.roles.1') =='Viatinet_supTitular')
+                @elseif(Session::get('user.roles.1') == 'Comsoc_Titular' || Session::get('user.roles.1') =='Comsoc_supTitular')
                   <th>Valida</th>
                   <th>{{ isset($ficha['status']) ? $ficha['status'] : 'Constancia' }}</th>
-                @elseif(Session::get('user.roles.1') == 'Viatinet_Dga' || Session::get('user.roles.1') =='Viatinet_supDga')
+                @elseif(Session::get('user.roles.1') == 'Comsoc_Dga' || Session::get('user.roles.1') =='Comsoc_supDga')
                   <th>Autoriza</th>
-                @elseif(Session::get('user.roles.1') == 'Viatinet_Admin')
+                @elseif(Session::get('user.roles.1') == 'Comsoc_Admin')
                   <th>Verifica</th>
                   <th></th>
                 @endif
               </tr>
             </thead>
             <tbody>
-
+              @foreach($fichas as $key => $dato)
+                <tr>
+                  <td>{{ $dato['folio'] }}</td>
+                  <td>{{ $dato['detalleComision']['nombre'] }}</td>
+                  <td>{{ date('d/m/Y H:i:s', strtotime($dato['created'])) }}</td>
+                  <td>{{ $dato['status'] }}</td>
+                  <td></td>
+                </tr>
+              @endforeach
             </tbody>
           </table>        
         </div>
@@ -224,13 +231,6 @@
         var validacion = 0;
         var firma = 0;
         var table = $('#fichas').DataTable({
-          "columnDefs": [
-            {
-                "targets": [ 0 ],
-                "visible": false,
-                "searchable": false
-            }
-          ],
           "language": {
             "lengthMenu": "Mostrar: _MENU_ por página",
             "zeroRecords": "No existen registros",
@@ -288,13 +288,13 @@
               $('#detalleDescarga').submit();
             });
         });
-        var countRech = "{{ $fichasRech }}", countAut = "{{ $fichasAut }}";
+        {{--  var countRech = "{{ $fichasRech }}", countAut = "{{ $fichasAut }}";
         if (countAut != 0) {
           $('<span class="badge badge-success">'+countAut+'</span>').appendTo('a#autorizadas');
         }
         if(countRech != 0){
           $('<span class="badge badge-warning">'+countRech+'</span>').appendTo('a#rechazadas');
-        }
+        }  --}}
         $('#showPass').on('click', function(){
           if ($('#password').get(0).type == 'password') {
             $('#password').attr('type', 'text');

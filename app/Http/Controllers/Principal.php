@@ -18,17 +18,10 @@ class Principal extends Controller{
   }
 
   public function svte(Request $request){
-    \Session::reflash();
-    \Session::forget('_id');
-    \Session::forget('created');
-    \Session::forget('fase');
-    \Session::forget('faseStatus');
-    \Session::forget('faseActual');
-    \Session::forget('faseActualDatos');
   	$util = new Utilidades();
 		$fsvte = new \App\Http\Controllers\fsvte();
     $request->session()->regenerateToken();
-		return \View::make('fsvte.svte')->with(array('fichas'=>$fsvte->obtieneFichas(), 'fichasRech'=>count($fsvte->obtieneFichasRechazadas()), 'fichasAut'=>count($fsvte->obtieneFichasAutorizadas())));	
+		return \View::make('fsvte.svte')->with(['fichas'=>$fsvte->obtieneFichas()]);	
 	}
 
   public function svteRechOperativo(Request $request){
