@@ -1,0 +1,71 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Response;
+
+class AuthCustom
+{
+    const URL_ACCESO = 'http://10.250.102.66:9002/plataforma/getSessionExtern';
+    const URL_CIERRE = 'http://10.250.102.66:9002/plataforma/closeSession';
+    const SERVICIO = 'Comsoc';
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return mixed
+     */
+    public function handle($request, Closure $next)
+    {   
+        $input = $request->input(); 
+        $mensaje = array();
+        if(isset($input['login'])){
+            if($input['login'] == '' || $input['pass'] == ''){
+                $mensaje = array('modal'=>array('mensaje'=>'No se puede dejar vacios los campos.','color'=>'red'));
+            }else{
+                $client = new \GuzzleHttp\Client();
+                $parametros = json_encode(array('data'=>array('mail'=>$input['login'],
+                                                        'password'=>md5($input['pass']), 
+                                                        'extern'=>env('SERVICIO',SELF::SERVICIO)
+                                                    )
+                                        )
+                            );
+            
+                $respuesta = $client->request('POST', env('URL_ACCESO',SELF::URL_ACCESO) , array('body'=>$parametros));
+                $json =json_decode($respuesta->getBody()->getContents(),true); 
+                if($json['error']['code'] != 0){
+                    $mensaje = array('modal'=>array('mensaje'=>$json['error']['msg'],'color'=>'red'));
+                }else{
+                    \Session::put('user.sessionId',$json['data']['sessionId']);
+                    \Session::put('user.cdmxId',$json['data']['cdmxId']);
+                    \Session::put('user.sessionStart',date('Y-m-d'));
+                    \Session::put('user.roles', collect($json['data']['Roles'])->map(function($i,$k){
+                        return $i['role'];
+                    })->toArray());
+                }
+            }
+        }else{ 
+            if(\Session::has('user.sessionId')){
+                if(\Session::get('user.sessionStart') != date('Y-m-d')){
+                    $client = new \GuzzleHttp\Client();
+                    $parametros = json_encode(array('security'=>array('sessionId'=>\Session::get('user.sessionId'))));
+                    $respuesta = $client->request('POST', env('URL_CIERRE', SELF::URL_CIERRE) , array('body'=>$parametros));
+                    \Session::flush();
+                    $mensaje = array('modal'=>array('mensaje'=>'Sesión Caducada','color'=>'red'));
+                    $request->session()->regenerateToken();
+                }
+            }else{
+                $mensaje = array('modal'=>array('mensaje'=>'', 'color'=>'red'));
+            }
+        }
+
+        if(!empty($mensaje)){
+            return new Response(view('login')->with($mensaje));
+        }else{
+            return $next($request);
+        }
+        
+    }
+}
