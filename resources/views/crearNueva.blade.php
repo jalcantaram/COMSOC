@@ -57,7 +57,7 @@
           <h4>-</h4>
         </div>
         <div class="form-group">
-          <input class="form-control" id="folio" type="text" value="001"  readonly=""  name="folio"  placeholder="" style="width:55px;">
+          <input class="form-control" id="folio" type="text" value="001"  readonly=""  name="folio"  placeholder="" style="width:65px;">
         </div>
         <div class="form-group">
           <h4>-</h4>

@@ -37,7 +37,7 @@
             @foreach($sidebar as $key => $item)
               @php
                 $tipoFase = []; 
-                $fases = Session::get('fase.requisicion.name');
+                $fases = Session::get('fase.type');
               @endphp
               @foreach($item['type'] as $type)
                 @foreach(array_keys($fases) as $k => $dataFase)
@@ -46,23 +46,26 @@
                   @endif
                 @endforeach
               @endforeach
-                @if(in_array(true, $tipoFase))
+                {{--  @if(in_array(true, $tipoFase))  --}}
+                {{--  @php dd([$key, Session::get('fase.'.$key.'.vacio'), !Session::has('fase.'.$key.'.vacio')]); @endphp  --}}
+                @if(in_array(true,$tipoFase))
                   <li class="{{ (isset($item['active']))? 'active':'' }}">
                     <a class="enviaFase" href="{{ url('/svte/'.$item['id']) }}">
                       <div>
-                        @if($key != 'requisicion')
+
+                        {{--  @if($key != 'requisicion')
                           @if(Session::get('fase.'.$key.'.vacio') || !Session::has('fase.'.$key.'.vacio'))
                               <i id="{{ $item['id'] }}" class="fa fa-close cross"></i>
                           @else
                               <i id="{{ $item['id'] }}" class="fa fa-check check"></i>
                           @endif
-                        @else
-                          @if(empty(Session::get('fase.'.$key)))
+                        @else  --}}
+                          @if(Session::get('fase.'.$key.'.vacio') || !Session::has('fase.'.$key.'.vacio'))
                               <i id="{{ $item['id'] }}" class="fa fa-close cross"></i>
                           @else
                               <i id="{{ $item['id'] }}" class="fa fa-check check"></i>
                           @endif
-                        @endif
+                        {{--  @endif  --}}
                         <label class="sideBarItem">{{ $item['nombre'] }}</label>
                       </div>
                     </a>

@@ -63,94 +63,7 @@
   @section('container')
     <div class="divGeneral">
         <h2>Expedientes Registrados</h2>
-        @if(Session::get('user.roles')->contains('Viatinet_Titular') || Session::get('user.roles')->contains('Viatinet_supTitular') || Session::get('user.roles')->contains('Viatinet_Dga') || Session::get('user.roles')->contains('Viatinet_supDga'))
-          @if(!Session::has('firmaactiva'))
-            <div class="row">
-              <div class="col-md-4 col-md-offset-4"></div>
-              <div class="col-md-2 col-md-offset-2">
-                <a data-toggle="modal" data-target="#activaFirma" href="" class="add" data-toggle="tooltip" data-placement="top" title="Los datos proporcionados para la firma electrónica permanecerán temporalmente almacenados en su equipo, por lo que al salir de Gobierno Digital CDMX y/o actualizar la página, dichos datos se eliminarán automáticamente." style="float: right;"><i class="espaciadoAcciones fa fa-unlock  fa-lg" align="right" ></i>Activar Firma</a>
-              </div>
-            </div>
-            <div class="modal fade" id="activaFirma" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                    <h4 class="modal-title" id="myModalLabel">Ingresa tus archivos</h4>
-                  </div>
-                  <div class="modal-body" style="color:#000;text-align: left;">
-                    <form id="formGuardafirma" action="{{ url('/setFirma') }}" enctype="multipart/form-data" accept-charset="UTF-8" method="post">
-                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    <div class="form-group">
-                      <div class="col-lg-12">
-                        <label for="cer">Seleccione el archivo .cer</label>     
-                      </div>
-                      <div class="col-lg-12 espaciado">
-                        <div class="col-lg-4">
-                          <a class="btn btn-primary  btn-file">
-                            Selecciona archivo
-                            <input accept=".cer" type="file" name="cer" id="cer" required="required" onchange="$('#upload-cert').html($(this).val());">
-                          </a>
-                        </div>
-                        <div class="col-lg-8">
-                          <span class="label label-default upload-span" id="upload-cert">&nbsp;</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <div class="col-lg-12">
-                      <br>
-                        <label for="key">Seleccione el archivo .key</label>
-                      </div>
-                      <div class="col-lg-12 espaciado">
-                        <div class="col-lg-4">
-                          <a class="btn btn-primary btn-file">
-                            Selecciona archivo
-                            <input accept=".key" type="file" name="key" id="key" required="required" onchange="$('#upload-key').html($(this).val());">
-                          </a>
-                        </div>
-                        <div class="col-lg-8">
-                          <span class="label label-default upload-span" id="upload-key">&nbsp;</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <div class="col-lg-12">
-                      <br>
-                        <label for="password">Ingresa la contraseña de tu fiel</label>
-                      </div>
-                      <div class="col-lg-12 espaciado">
-                        <div class="input-group">
-                          <input type="password" id="password" name="password" class="form-control" placeholder="Contraseña">
-                          <div class="input-group-btn">
-                            <a href="#" class="btn btn-default" id="showPass">
-                              <i class="fa fa-eye"></i>
-                            </a>
-                          </div>
-                        </div>
-                        <br>
-                      </div>
-                    </div>
-                    <button type="submit" class="btn btn_cdmx">Guardar</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-          @else
-            <div class="row">
-              <div class="col-md-3 col-md-offset-3"></div>
-              <div class="col-md-3 col-md-offset-3">
-                <form action="{{ url('/forgetFirma')}}" method="post" id="forgetFirma" style="float: right;">
-                  <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                  <a href="javascript:{}" class="add" onclick="document.getElementById('forgetFirma').submit(); return false;"><i class="espaciadoAcciones fa fa fa-lock  fa-lg" aria-hidden="true"></i>Desactivar Firma</a>
-                </form>
-              </div>
-            </div>  
-          @endif
-        @endif
+  
         <br>
         <div class="row">
           <form class="form-horizontal" action="{{ url('/exportcsv') }}" enctype="multipart/form-data">
@@ -192,7 +105,7 @@
                   <td>{{ $dato['folio'] }}</td>
                   <td>
                     @php $val = ''; @endphp
-                    @foreach($dato['name'] as $name)
+                    @foreach($dato['type'] as $name)
                       @php 
                         $val != '' && $val .= ' / ';
                         $val .= $name
@@ -202,7 +115,11 @@
                   </td>
                   <td>{{ date('d/m/Y H:i:s', strtotime($dato['created'])) }}</td>
                   <td>{{ $dato['status'] }}</td>
-                  <td></td>
+                  <td class="text-center">
+                    <a href="{{ url('/efsvte?f='.$dato['_id']) }}" class="btn btn-default" role="button">
+                      <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                    </a>
+                  </td>
                 </tr>
               @endforeach
             </tbody>

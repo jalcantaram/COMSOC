@@ -7,10 +7,57 @@ use Illuminate\Database\Eloquent\Model;
 class StaticContent extends Model
 {
   const FASES = [
+    'datosEmpresa' => [
+      'name' => 'Datos de la Empresa',
+      'type' => ['prensa','radio', 'television', 'revista', 'internet', 'monitoreo', 'spot', 'filmacion', 'eventosJG', 'cineminuto', 'otro'],
+      'upload' => true,
+      'data' => [
+        // 'datosEmpresa' =>[
+        //   'tipo' => 'container',
+        //   'long' => 100,
+        //   'requerido' => true,
+        //   'unico' => true,
+        //   'detalle' => [
+            'nombreComercial' => [
+                'nombre' => 'Nombre Comercial (Empresa)',
+                'tipo' => 'string',
+                'long' => 250,
+                'minLong' => 5,
+                'requerido' => true,
+                'uppercase' => true
+            ],
+            'razonSocial' => [
+                'nombre' => 'Razón Social',
+                'tipo' => 'string',
+                'long' => 250,
+                'requerido' => true,
+                'uppercase' => true
+            ],
+            'rfcProveedor' => [
+                'nombre' => 'Registro Federal del Contribuyente (Empresa)',
+                'tipo' => 'rfc',
+                'long' => 13,
+                'requerido' => true,
+                'uppercase' => true
+            ],
+          // ]
+        // ],
+        'documents'=>[
+          'nombre'=>'Sección de documentos',
+          'tipo'=>'upload',
+          'long'=>100,
+          'requerido'=>false,
+          'th'=>[
+            'Título del documento',
+            'Nombre del documento',
+          ],
+        ]
+      ]  
+    ],
     'requisicion'=>[
-      'name'=>'Requisicion',
+      'name'=>'Requisición',
       'tipo'=>'container',
-      'type'=>['prensa','radio', 'television', 'revista', 'internet', 'monitoreo', 'spot', 'filmacion', 'eventosJG', 'cineminuto'],
+      'type'=>['prensa','radio', 'television', 'revista', 'internet', 'monitoreo', 'spot', 'filmacion', 'eventosJG', 'cineminuto', 'otro'],
       'upload'=>true,
       'data'=>[
         'nomComision'=>[
@@ -53,7 +100,7 @@ class StaticContent extends Model
     'invitacion'=>[
       'name'=>'Invitacion',
       'tipo'=>'container',
-      'type'=>['prensa','radio', 'television', 'revista', 'internet', 'monitoreo', 'spot', 'filmacion', 'eventosJG', 'cineminuto'],
+      'type'=>['prensa','radio', 'television', 'revista', 'internet', 'monitoreo', 'spot', 'filmacion', 'eventosJG', 'cineminuto', 'otro'],
       'upload'=>true,
       'data'=>[
         'nomComision'=>[
@@ -750,7 +797,8 @@ class StaticContent extends Model
               return $j;
             }
           });
-        } 
+        }
+        // dd($i);
         return $i;
       });
     }

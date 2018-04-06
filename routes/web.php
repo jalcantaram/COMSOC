@@ -25,17 +25,17 @@ Route::get('/crearNueva', function(){
 // Route::get('/autorizadas', 'Principal@svteAutOperativo');
 // Route::get('/rechazadas', 'Principal@svteRechOperativo');
 
-// Route::post('/gfsvte','fsvte@guardaFicha');
+Route::post('/gfsvte','fsvte@guardaFicha');
 Route::post('/nfsvte', 'fsvte@creaFicha');
 Route::post('/getSecuencia', 'fsvte@getSecuencia');
 // Route::post('/ffsvte','fsvte@finRegistro');
 // Route::post('/newItem','fsvte@nuevoItem');
 // Route::post('/newItemModal','fsvte@nuevoItemModal');
 // Route::post('/loadItemModal','fsvte@cargaItemModal');
-// Route::post('/sendFile','Principal@envioArchivos');
+Route::post('/sendFile','Principal@envioArchivos');
 
-// Route::get('/efsvte', 'fsvte@editaFicha');
-// Route::get('/getDocumentPdf/{id}','Principal@obtienePdf');
+Route::get('/efsvte', 'fsvte@editaFicha');
+Route::get('/getDocumentPdf/{id}','Principal@obtienePdf');
 Route::get('/svte','Principal@svte');
 // Route::get('/info', 'fsvte@getDetail');
 // Route::get('/getEstados', 'fsvte@getEstados');
