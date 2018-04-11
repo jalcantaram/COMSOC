@@ -90,6 +90,12 @@
   <script src="{!! asset('assets/js/jquery.number.js') !!}"></script>
   <script src="{!! asset('assets/js/jquery.datetimepicker.js') !!}"></script>
   <script src="{!! asset('assets/js/jquery.tipsy.js') !!}"></script>
+
+  <script src="{!! asset('js/upload/vendor/jquery.ui.widget.js') !!}"></script>
+  <script src="{!! asset('js/upload/jquery.iframe-transport.js') !!}"></script>
+  <script src="{!! asset('js/upload/jquery.fileupload.js') !!}"></script>
+
+
 @endsection
 @section('customjs')
   @if(Session::get('fase.detalleComision.nombre') == 'nacional' && Session::get('faseActual') != 'detalleComision')

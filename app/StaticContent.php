@@ -12,36 +12,34 @@ class StaticContent extends Model
       'type' => ['prensa','radio', 'television', 'revista', 'internet', 'monitoreo', 'spot', 'filmacion', 'eventosJG', 'cineminuto', 'otro'],
       'upload' => true,
       'data' => [
-        // 'datosEmpresa' =>[
-        //   'tipo' => 'container',
-        //   'long' => 100,
-        //   'requerido' => true,
-        //   'unico' => true,
-        //   'detalle' => [
-            'nombreComercial' => [
-                'nombre' => 'Nombre Comercial (Empresa)',
-                'tipo' => 'string',
-                'long' => 250,
-                'minLong' => 5,
-                'requerido' => true,
-                'uppercase' => true
-            ],
-            'razonSocial' => [
-                'nombre' => 'Razón Social',
-                'tipo' => 'string',
-                'long' => 250,
-                'requerido' => true,
-                'uppercase' => true
-            ],
-            'rfcProveedor' => [
-                'nombre' => 'Registro Federal del Contribuyente (Empresa)',
-                'tipo' => 'rfc',
-                'long' => 13,
-                'requerido' => true,
-                'uppercase' => true
-            ],
-          // ]
-        // ],
+        'nombreComercial' => [
+          'nombre' => 'Nombre Comercial (Empresa)',
+          'tipo' => 'string',
+          'long' => 250,
+          'minLong' => 5,
+          'requerido' => true,
+          'uppercase' => true
+        ],
+        'razonSocial' => [
+            'nombre' => 'Razón Social',
+            'tipo' => 'string',
+            'long' => 250,
+            'requerido' => true,
+            'uppercase' => true
+        ],
+        'rfcProveedor' => [
+            'nombre' => 'Registro Federal del Contribuyente (Empresa)',
+            'tipo' => 'rfc',
+            'long' => 13,
+            'requerido' => true,
+            'uppercase' => true
+        ],
+        'montoContrato' => [
+          'nombre' => 'Monto Contrato (Empresa)',
+          'tipo' => 'double',
+          'long' => 250,
+          'requerido' => true,
+        ],
         'documents'=>[
           'nombre'=>'Sección de documentos',
           'tipo'=>'upload',
@@ -60,36 +58,33 @@ class StaticContent extends Model
       'type'=>['prensa','radio', 'television', 'revista', 'internet', 'monitoreo', 'spot', 'filmacion', 'eventosJG', 'cineminuto', 'otro'],
       'upload'=>true,
       'data'=>[
-        'nomComision'=>[
-          'encabezado'=>'Datos',
-          'nombre'=>'Nombre de la Comisión',
-          'tipo'=>'string',
-          'long'=>200,
-          'requerido'=>true
+        'nombreComercial' => [
+            'nombre' => 'Nombre Comercial (Empresa)',
+            'tipo' => 'string',
+            'long' => 250,
+            'minLong' => 5,
+            'requerido' => true,
+            'uppercase' => true
         ],
-        'orgEvento'=>[
-          'nombre'=>'Organizador del Evento',
-          'tipo'=>'string',
-          'long'=>100,
-          'requerido'=>true
+        'razonSocial' => [
+            'nombre' => 'Razón Social',
+            'tipo' => 'string',
+            'long' => 250,
+            'requerido' => true,
+            'uppercase' => true
         ],
-        'link'=>[
-          'nombre'=>'Link del Evento (opcional)',
-          'tipo'=>'url',
-          'long'=>200,
-          'requerido'=>false
-        ],
-        'motivo'=>[
-          'nombre'=>'Motivo de la Comisión',
-          'tipo'=>'textarea',
-          'long'=>1600,
-          'requerido'=>true
+        'rfcProveedor' => [
+            'nombre' => 'Registro Federal del Contribuyente (Empresa)',
+            'tipo' => 'rfc',
+            'long' => 13,
+            'requerido' => true,
+            'uppercase' => true
         ],
         'documents'=>[
           'nombre'=>'Sección de documentos',
           'tipo'=>'upload',
           'long'=>100,
-          'requerido'=>true,
+          'requerido'=>false,
           'th'=>[
             'Título del documento',
             'Nombre del documento',

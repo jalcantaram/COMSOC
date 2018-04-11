@@ -156,7 +156,9 @@ class Principal extends Controller{
 	public function envioArchivos(Request $request){
 		$archivo = date('dmYHis').'.pdf';
 		$request->file('anexo')->move(storage_path('viatinet/tmp'),$archivo);
-		return ['nombreDocumento'=>$request->file('anexo')->getClientOriginalName(),
+    dd($request->all());
+		return [
+      'nombreDocumento' => $request->file('anexo')->getClientOriginalName(),
   		'nombreArchivo'=>$archivo,
   		'id'=>md5(date('dmYHis'))
 	   ];

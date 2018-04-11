@@ -93,73 +93,130 @@
               @if($item['tipo'] == 'upload')
                 <hr>
                 <div class="form-group">
-                  <div class="col-lg-8">
-                    <label><strong>{{$item['nombre']}}</strong></label>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <label><strong>{{$item['nombre']}}</strong></label>
+                    </div>
                   </div>
-                  <div class="col-lg-9 espaciado">
-                    <div class="col-lg-3">
-                      <a class="btn btn-primary btn-file">
-                        Selecciona archivo
-                        <input accept=".pdf" type="file" name="{{$key}}" id="{{$key}}">
-                      </a>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <button class="btn btn-primary" id="buttonFileUpload">
+                        <input id="fileupload" type="file" name="file" data-url="https://www.uploadserverdev.cdmx.gob.mx/api/upload" style="display: inline;">
+                        Seleccionar Archivo
+                      </button>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="table-responsive">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th class="col-sm-3">%</th>
+                            <th class="col-sm-7">Nombre</th>
+                            <th class="col-sm-2">Eliminar</th>                           
+                          </tr>
+                        </thead>
+                        <tbody id="file-upload-list" class="text-center">
+                          @if(!empty(Session::get(Session::get('faseActualDatos').'.documents')))
+                            @foreach(Session::get(Session::get('faseActualDatos').'.documents') as $document)
+                            <tr>
+                              <td>
+                                <input type="hidden" id="documentsUrl" value="{{ $document['url'] }}">
+                                <input type="hidden" id="nombreDocumento" value="{{ $document['originalName'] }}">
+                                <div class="progress">
+                                  <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="100" aria-valuemax="100" style="width:100%">100%</div>
+                                </div>
+                              </td>
+                              <td>
+                                <a target="_blank" href="{{ $document['filePath'] }}">
+                                  {{ $document['originalName'] }}
+                                </a>
+                              </td>
+                              <td>
+                                <button type="button" class="btn btn-danger" onclick="deleteUpload(this)">
+                                  <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                              </td>
+                            </tr>
+                            @endforeach
+                          @endif
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                 </div>
                 <script>
+                  window.onload = function() { updateTable() };
+                  function deleteUpload(r){
+                    var i = r.parentNode.rowIndex;
+                    document.getElementById("file-upload-list").deleteRow(i);
+                    var rowsCount = document.getElementById("file-upload-list").rows.length;
+                    for (var i =0; i < rowsCount; i++){
+                      var x = document.getElementById('file-upload-list');
+                      x.rows[i].cells[0].getElementsByTagName("input")[0].setAttribute('name', 'documents['+i+'][url]');
+                      x.rows[i].cells[0].getElementsByTagName("input")[1].setAttribute('name', 'documents['+i+'][nombreDocumento]');
+                    }
+                  }
+                  function updateTable(){
+                    var rowsCount = document.getElementById("file-upload-list").rows.length;
+                    for (var i =0; i < rowsCount; i++){
+                      var x = document.getElementById('file-upload-list');
+                      x.rows[i].cells[0].getElementsByTagName("input")[0].setAttribute('name', 'documents['+i+'][url]');
+                      x.rows[i].cells[0].getElementsByTagName("input")[1].setAttribute('name', 'documents['+i+'][nombreDocumento]');
+                    }
+                  }
                   $(document).ready(function(){
-                    $("#{{$key}}").change(function(){
-                      var formData = new FormData();
-                      formData.append('anexo',document.getElementById('{{$key}}').files[0]);
-                      formData.append('_token','{{ csrf_token() }}');
-                      $.ajax({
-                        url:'{{ url("/sendFile") }}',
-                        data: formData,
-                        type: 'post',
+                    var fileUpload = $('#fileupload');
+                    var uploadList = $('#file-upload-list');
+                    var buttonFile = $('#buttonFileUpload');
+                    var filename;
+                    fileUpload.change(function(){
+                      filename = $('#fileupload').val().replace(/C:\\fakepath\\/i, '');
+                    });
+                    if(uploadList.length > 0 && fileUpload.length > 0){
+                      var idSequence = 0;
+                      //var rowsCount = document.getElementById("file-upload-list").rows.length;
+                      fileUpload.fileupload({
                         dataType: 'json',
-                        processData: false,
-                        contentType: false,
-                        success: function(response){
-                          var html = '<tr>';
-                          html += '<td><select class="form-control" name="{{$key}}['+response.id+'][title]"><option value="Autorización de la Contraloría General">Autorización de la Contraloría General</option><option value="Oficio de validación de suficiencia presupuestal">Oficio de validación de suficiencia presupuestal</option><option value="Oficio de comisión">Oficio de comisión</option><option value="Agenda o itinerario de la comisión">Agenda o itinerario de la comisión</option><option value="Invitación del evento">Invitación del evento</option><option value="Otro">Otro</option></select></td>';
-                          html += '<td>'+response.nombreDocumento+'</td>';
-                          html+='<td align="center">'+
-                                '<input type="hidden" name="{{$key}}['+response.id+'][nombreDocumento]" value="'+response.nombreDocumento+'">'+
-                                '<input type="hidden" name="{{$key}}['+response.id+'][nombreArchivo]" value="'+response.nombreArchivo+'">'+
-                                '<button type="button" class="btn btn-danger btn-delItem">'+
-                                '<span class="glyphicon glyphicon-trash"></span>'+
-                                '</button>'+
-                                '</td>';
-                          html+='</tr>';
-                          $("#tabla-{{$key}} tbody").append(html);
+                        maxChunkSize: 1000000,
+                        method: "POST",
+                        sequentialUploads: true,
+                        formData: function formData(form) {
+                          return [{ name: '_token', value: $('input[name=_token]').val() }];
+                        },
+                        progressall: function progressall(e, data) {
+                          var progress = parseInt(data.loaded / data.total * 100, 10);
+                          $("#progressBar").css('width',progress+'%');
+                          $("#progressBar").html(progress+'%');
+                        },
+                        add: function add(e, data) {
+                          //data._progress.theId = idSequence;
+                          $("#progressBar").css('width','0%');
+                          $("#progressBar").html('0%');
+                          $("#progressBar").addClass('progress-bar-striped');
+                          idSequence++;
+                          $('#buttonFileUpload input[name="file"]').attr("disabled", true);
+                          buttonFile.attr("disabled", "disabled");
+                          uploadList.append('<tr id="subiendo"><td><div class="progress"><div id="progressBar" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">0%</div></div></td></tr>');
+                          data.submit();
+                        },
+                        done: function done(e, data) {
+                          $('#buttonFileUpload input[name="file"]').removeAttr("disabled");
+                          buttonFile.removeAttr("disabled");
+                          $('#file-upload-list #subiendo').remove();
+                          $("#progressBar").removeClass('progress-bar-striped');
+                          uploadList.append('<tr id="'+idSequence+'"><td><input type="hidden" id="documentsUrl" value="'+data.result.path + data.result.name+'"><input type="hidden" id="nombreDocumento" value="'+filename+'"><div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="100" aria-valuemax="100" style="width:100%">100%</div></div></td><td>'+filename+'</td><td><button type="button" class="btn btn-danger" onclick="deleteUpload(this)"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
+                          var rowsCount = document.getElementById("file-upload-list").rows.length;
+                          for (var i =0; i < rowsCount; i++){
+                            var x = document.getElementById('file-upload-list');
+                            x.rows[i].cells[0].getElementsByTagName("input")[0].setAttribute('name', 'documents['+i+'][url]');
+                            x.rows[i].cells[0].getElementsByTagName("input")[1].setAttribute('name', 'documents['+i+'][nombreDocumento]');
+                          }
                         }
                       });
-                    });
+                    }
                   });
-                </script> 
-                <div class="form-group">
-                  <table style="{{ isset($item['footer'])? "margin-bottom: 0px;": '' }}" id="tabla-{{ $key }}" 
-                         class="table table-striped table-bordered">
-                  <thead>
-                  <tr>
-                    @foreach($item['th'] as $th)
-                      <th>{{ $th }}</th>
-                    @endforeach
-                    <th></th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                    @if(!empty(Session::get(Session::get('faseActualDatos').'.documents')))
-                      @foreach(Session::get(Session::get('faseActualDatos').'.documents') as $document)
-                        <tr>
-                          <td>{{$document['title']}}</td>
-                          <td><a target="_blank" href="{{ $document['url'] }}">{{$document['nombreDocumento']}}</a></td>
-                          <td></td>
-                        </tr>
-                      @endforeach
-                    @endif
-                  </tbody>
-                  </table>
-                </div>
+                </script>
               @else
                 @if($item['tipo'] == 'number')
                   <div class="form-group">
