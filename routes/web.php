@@ -28,6 +28,9 @@ Route::get('/crearNueva', function(){
 Route::post('/gfsvte','fsvte@guardaFicha');
 Route::post('/nfsvte', 'fsvte@creaFicha');
 Route::post('/getSecuencia', 'fsvte@getSecuencia');
+
+Route::get('/getFile','fsvte@getFilebyPath');
+
 // Route::post('/ffsvte','fsvte@finRegistro');
 // Route::post('/newItem','fsvte@nuevoItem');
 // Route::post('/newItemModal','fsvte@nuevoItemModal');

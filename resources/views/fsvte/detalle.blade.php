@@ -100,8 +100,8 @@
                   </div>
                   <div class="row">
                     <div class="col-md-12">
-                      <button class="btn btn-primary" id="buttonFileUpload">
-                        <input id="fileupload" type="file" name="file" data-url="https://www.uploadserverdev.cdmx.gob.mx/api/upload" style="display: inline;">
+                      <button class="btn btn-primary" id="buttonFileUpload_{{ $key }}">
+                        <input id="fileupload_{{ $key }}" type="file" name="file" accept=".pdf, .zip" style="display: inline;">
                         Seleccionar Archivo
                       </button>
                     </div>
@@ -116,24 +116,27 @@
                             <th class="col-sm-2">Eliminar</th>                           
                           </tr>
                         </thead>
-                        <tbody id="file-upload-list" class="text-center">
-                          @if(!empty(Session::get(Session::get('faseActualDatos').'.documents')))
-                            @foreach(Session::get(Session::get('faseActualDatos').'.documents') as $document)
+                        <tbody id="file-upload-list-{{ $key }}" class="text-center">
+                          @if(!empty(Session::get(Session::get('faseActualDatos').'.'.$key)))
+                            @foreach(Session::get(Session::get('faseActualDatos').'.'.$key) as $document)
                             <tr>
                               <td>
-                                <input type="hidden" id="documentsUrl" value="{{ $document['url'] }}">
+                                <input type="hidden" id="documentsUrl" value="{{ isset($document['url']) ? $document['url'] : null }}">
                                 <input type="hidden" id="nombreDocumento" value="{{ $document['originalName'] }}">
+                                <input type="hidden" id="filePath" value="{{ $document['filePath'] }}">
+                                <input type="hidden" id="code" value="{{ $document['code'] }}">
+                                <input type="hidden" id="status" value="{{ json_encode($document['status']) }}">
                                 <div class="progress">
                                   <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="100" aria-valuemax="100" style="width:100%">100%</div>
                                 </div>
                               </td>
                               <td>
-                                <a target="_blank" href="{{ $document['filePath'] }}">
+                                <a target="_blank" href="{{ url('/getFile?file='.$document['filePath']) }}">
                                   {{ $document['originalName'] }}
                                 </a>
                               </td>
                               <td>
-                                <button type="button" class="btn btn-danger" onclick="deleteUpload(this)">
+                                <button type="button" class="btn btn-danger" onclick="deleteUpload{{ $key }}(this)">
                                   <span class="glyphicon glyphicon-trash"></span>
                                 </button>
                               </td>
@@ -146,75 +149,98 @@
                   </div>
                 </div>
                 <script>
-                  window.onload = function() { updateTable() };
-                  function deleteUpload(r){
+                  $(window).load(function() {
+                    updateTable{{ $key }}();
+                  });
+                  function deleteUpload{{ $key }}(r){
                     var i = r.parentNode.rowIndex;
-                    document.getElementById("file-upload-list").deleteRow(i);
-                    var rowsCount = document.getElementById("file-upload-list").rows.length;
+                    document.getElementById("file-upload-list-{{ $key }}").deleteRow(i);
+                    var rowsCount = document.getElementById("file-upload-list-{{ $key }}").rows.length;
+                    var countFalse = new Array();
                     for (var i =0; i < rowsCount; i++){
-                      var x = document.getElementById('file-upload-list');
-                      x.rows[i].cells[0].getElementsByTagName("input")[0].setAttribute('name', 'documents['+i+'][url]');
-                      x.rows[i].cells[0].getElementsByTagName("input")[1].setAttribute('name', 'documents['+i+'][nombreDocumento]');
+                      var x = document.getElementById('file-upload-list-{{ $key }}');
+                      if(!x.rows[i].classList.contains('danger')){
+                        var classTag = x.rows[i];
+                        countFalse.push(x.rows[i].classList.contains('danger'));
+                        for(var s = 0; s < countFalse.length; s++){
+                          classTag.cells[0].getElementsByTagName('input')[0].setAttribute('name', '{{$key}}['+s+'][url]');
+                          classTag.cells[0].getElementsByTagName('input')[1].setAttribute('name', '{{$key}}['+s+'][nombreDocumento]');
+                        }
+                      }
                     }
                   }
-                  function updateTable(){
-                    var rowsCount = document.getElementById("file-upload-list").rows.length;
+                  function updateTable{{ $key }}(){
+                    var rowsCount = document.getElementById("file-upload-list-{{ $key }}").rows.length;
                     for (var i =0; i < rowsCount; i++){
-                      var x = document.getElementById('file-upload-list');
-                      x.rows[i].cells[0].getElementsByTagName("input")[0].setAttribute('name', 'documents['+i+'][url]');
-                      x.rows[i].cells[0].getElementsByTagName("input")[1].setAttribute('name', 'documents['+i+'][nombreDocumento]');
+                      var x = document.getElementById('file-upload-list-{{ $key }}');
+                      console.log(x);
+                      x.rows[i].cells[0].getElementsByTagName("input")[0].setAttribute('name', '{{$key}}['+i+'][url]');
+                      x.rows[i].cells[0].getElementsByTagName("input")[1].setAttribute('name', '{{$key}}['+i+'][nombreDocumento]');
+                      x.rows[i].cells[0].getElementsByTagName("input")[2].setAttribute('name', '{{$key}}['+i+'][filePath]');
+                      x.rows[i].cells[0].getElementsByTagName("input")[3].setAttribute('name', '{{$key}}['+i+'][code]');
+                      x.rows[i].cells[0].getElementsByTagName("input")[4].setAttribute('name', '{{$key}}['+i+'][status]');
+                    }
+                  }
+                  function updateErroTable{{ $key }}(){
+                    var rowsCount = document.getElementById("file-upload-list-{{ $key }}").rows.length;
+                    var countFalse = new Array();
+                    for (var i =0; i < rowsCount; i++){
+                      var x = document.getElementById('file-upload-list-{{ $key }}');
+                      if(!x.rows[i].classList.contains('danger')){
+                        var classTag = x.rows[i];
+                        countFalse.push(x.rows[i].classList.contains('danger'));
+                        for(var s = 0; s < countFalse.length; s++){
+                          classTag.cells[0].getElementsByTagName('input')[0].setAttribute('name', '{{$key}}['+s+'][url]');
+                          classTag.cells[0].getElementsByTagName('input')[1].setAttribute('name', '{{$key}}['+s+'][nombreDocumento]');
+                        }
+                      }
                     }
                   }
                   $(document).ready(function(){
-                    var fileUpload = $('#fileupload');
-                    var uploadList = $('#file-upload-list');
-                    var buttonFile = $('#buttonFileUpload');
-                    var filename;
+                    var fileUpload = $('#fileupload_{{ $key }}');
+                    var uploadList = $('#file-upload-list-{{ $key }}');
+                    var buttonFile = $('#buttonFileUpload_{{ $key }}');
+                    var filename, extension;
                     fileUpload.change(function(){
-                      filename = $('#fileupload').val().replace(/C:\\fakepath\\/i, '');
+                      filename = $('#fileupload_{{ $key }}').val().replace(/C:\\fakepath\\/i, '');
                     });
-                    if(uploadList.length > 0 && fileUpload.length > 0){
-                      var idSequence = 0;
-                      //var rowsCount = document.getElementById("file-upload-list").rows.length;
-                      fileUpload.fileupload({
-                        dataType: 'json',
-                        maxChunkSize: 1000000,
-                        method: "POST",
-                        sequentialUploads: true,
-                        formData: function formData(form) {
-                          return [{ name: '_token', value: $('input[name=_token]').val() }];
-                        },
-                        progressall: function progressall(e, data) {
-                          var progress = parseInt(data.loaded / data.total * 100, 10);
-                          $("#progressBar").css('width',progress+'%');
-                          $("#progressBar").html(progress+'%');
-                        },
-                        add: function add(e, data) {
-                          //data._progress.theId = idSequence;
-                          $("#progressBar").css('width','0%');
-                          $("#progressBar").html('0%');
-                          $("#progressBar").addClass('progress-bar-striped');
-                          idSequence++;
-                          $('#buttonFileUpload input[name="file"]').attr("disabled", true);
-                          buttonFile.attr("disabled", "disabled");
-                          uploadList.append('<tr id="subiendo"><td><div class="progress"><div id="progressBar" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">0%</div></div></td></tr>');
-                          data.submit();
-                        },
-                        done: function done(e, data) {
-                          $('#buttonFileUpload input[name="file"]').removeAttr("disabled");
-                          buttonFile.removeAttr("disabled");
-                          $('#file-upload-list #subiendo').remove();
-                          $("#progressBar").removeClass('progress-bar-striped');
-                          uploadList.append('<tr id="'+idSequence+'"><td><input type="hidden" id="documentsUrl" value="'+data.result.path + data.result.name+'"><input type="hidden" id="nombreDocumento" value="'+filename+'"><div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="100" aria-valuemax="100" style="width:100%">100%</div></div></td><td>'+filename+'</td><td><button type="button" class="btn btn-danger" onclick="deleteUpload(this)"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
-                          var rowsCount = document.getElementById("file-upload-list").rows.length;
-                          for (var i =0; i < rowsCount; i++){
-                            var x = document.getElementById('file-upload-list');
-                            x.rows[i].cells[0].getElementsByTagName("input")[0].setAttribute('name', 'documents['+i+'][url]');
-                            x.rows[i].cells[0].getElementsByTagName("input")[1].setAttribute('name', 'documents['+i+'][nombreDocumento]');
-                          }
-                        }
-                      });
-                    }
+                    var idSequence = 0;
+                    $('#fileupload_{{ $key }}').fileupload({
+                      url: "{{ env('API_UPLOAD') }}",
+                      dataType: 'json',
+                      autoUpload: true,
+                      acceptFileTypes: /(\.|\/)(pdf|zip)$/i,
+                      maxFileSize: 999000,
+                      method: "POST"                      
+                    }).on('fileuploadadd', function (e, data) {
+                      $("#progressBar").css('width','0%');
+                      $("#progressBar").html('0%');
+                      $("#progressBar").addClass('progress-bar-striped');
+                      idSequence++;
+                      $('#buttonFileUpload_{{ $key }} input[name="file"]').attr("disabled", true);
+                      buttonFile.attr("disabled", "disabled");
+                      uploadList.append('<tr id="subiendo"><td><div class="progress"><div id="progressBar" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">0%</div></div></td></tr>');
+                    }).on('fileuploadprocessalways', function (e, data) {                      
+                      var index = data.index, file = data.files[index];
+                      if (file.error) {
+                        $('#buttonFileUpload_{{ $key }} input[name="file"]').removeAttr("disabled");
+                        buttonFile.removeAttr("disabled");
+                        $('#file-upload-list-{{ $key }} #subiendo').remove();
+                        uploadList.append('<tr class="danger"><td><span>tipo de archivo no valido</span></td><td>'+file.name+'</td><td><button type="button" class="btn btn-danger" onclick="deleteUpload{{ $key }}(this)"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
+                        updateErroTable{{ $key }}();
+                      }
+                    }).on('fileuploadprogressall', function (e, data) {
+                      var progress = parseInt(data.loaded / data.total * 100, 10);
+                      $("#progressBar").css('width',progress+'%');
+                      $("#progressBar").html(progress+'%');
+                    }).on('fileuploaddone', function (e, data) {
+                      $('#buttonFileUpload_{{ $key }} input[name="file"]').removeAttr("disabled");
+                      buttonFile.removeAttr("disabled");
+                      $('#file-upload-list-{{ $key }} #subiendo').remove();
+                      $("#progressBar").removeClass('progress-bar-striped');
+                      uploadList.append('<tr id="'+idSequence+'"><td><input type="hidden" id="documentsUrl" value="'+data.result.path + data.result.name+'"><input type="hidden" id="nombreDocumento" value="'+filename+'"><div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="100" aria-valuemax="100" style="width:100%">100%</div></div></td><td>'+filename+'</td><td><button type="button" class="btn btn-danger" onclick="deleteUpload{{ $key }}(this)"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
+                      updateErroTable{{ $key }}();
+                    }).prop('disabled', !$.support.fileInput).parent().addClass($.support.fileInput ? undefined : 'disabled');
                   });
                 </script>
               @else

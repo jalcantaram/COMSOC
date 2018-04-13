@@ -32,6 +32,28 @@ class fsvte extends Controller{
     $this->uploader = new Uploader();
   }
 
+  private function getFile($url, $base64 = true){
+    // $uploader  = $this->;
+    $respuesta = $this->uploader->obtieneArchivo($url);
+
+    if($respuesta['error']['code'] == 0){
+      if($base64){
+        $file = $respuesta['data'];
+      }else{
+        $file = base64_decode($respuesta['data']);
+      }
+      
+    }else{
+      if($base64){
+        $file = base64_encode(\PDF::loadHTML(\View::make('errors.pdfNotFound'))->setWarnings(false)->stream());
+      }else{
+        $file = \PDF::loadHTML(\View::make('errors.pdfNotFound'))->setWarnings(false)->stream();
+      }
+      
+    }
+    return $file; 
+  }
+
   public function obtieneFichas(){
     $util = new Utilidades();
     $retorno = $util->muleConnection('GET','/comsoc/schemaExpediente/all?sessionId='.\Session::get('sessionId'), 10017);
@@ -143,24 +165,21 @@ class fsvte extends Controller{
         $this->generaFases()['sidebar']['datosEmpresa']['id'] => [
           'bloquedo' => false,
           'vacio' => true,
-          'nombre' => $this->generaFases()['sidebar']['datosEmpresa']['nombre'],
         ],
         'type' => $res
       ]
     ];
     $json = $util->muleConnection('POST','/comsoc/saveSchemaExpediente', 10017,$parametros);
     if($json['error']['code']==0){
-      \Session::flash('idExpediente',$json['data']['idExpediente']);
-      // unset($json['data']['idExpediente']);
-      \Session::flash('created',$json['data']['created']);
-      // unset($json['data']['created']); 
+      \Session::put('idExpediente',$json['data']['idExpediente']);
+      \Session::put('created',$json['data']['created']);
       foreach($json['data'] as $fase => $data){
-        \Session::flash('fase.'.$fase, $data);
+        \Session::put('fase.'.$fase, $data);
       }
-      \Session::flash('faseActual','datosEmpresa');
-      \Session::flash('faseActualDatos','fase.datosEmpresa');
+      \Session::put('faseActual','datosEmpresa');
+      \Session::put('faseActualDatos','fase.datosEmpresa');
       $parametros  = $this->generaFases() + $this->generaDefinicion();
-      \Session::flash('urlBack', '/svte');        
+      \Session::put('urlBack', '/svte');        
       return redirect('/efsvte?f='.$json['data']['idExpediente']);
     }else{
       $retorno = json_encode(['color'=>'#C6383D',
@@ -173,36 +192,30 @@ class fsvte extends Controller{
 
   public function editaFicha(Request $request){
     \Session::reflash();
+    \Session::forget('fase');
+    \Session::forget('faseActual');
+    \Session::forget('faseActualDatos');
     $input = $request->input();
     $util = new Utilidades();
     $expediente = $request['f'];
-    // dd([$request->all(), \Session::get('sessionId')]);
     $json = $util->muleConnection('GET','/comsoc/schemaExpediente?sessionId='.\Session::get('sessionId').'&idExpediente='.$expediente, 10017);
-    // dd($json);
     if($json['error']['code']==0){
-        \Session::put('urlBack', \URL::previous());
-        \Session::flash('idExpediente',$json['data']['_id']);
-        // unset($json['data']['_id']);
-        \Session::flash('created',$json['data']['created']);
-        // unset($json['data']['created']); 
-        // unset($json['data']['fase']);
-        // unset($json['data']['cdmxIdCreated']);
-        unset($json['data']['activo']);
-        foreach($json['data'] as $fase=>$data){
-          \Session::flash('fase.'.$fase,$data);
-        }
-        \Session::flash('faseActual','datosEmpresa');
-        \Session::flash('faseActualDatos','fase.datosEmpresa');
-        $parametros  = $this->generaFases() + $this->generaDefinicion();
-        return \View::make('fsvte.fichaSVTE')->with($parametros);
-        // return redirect('/efsvte?f='.$json['data']['_id']);
+      \Session::put('urlBack', \URL::previous());
+      \Session::put('idExpediente',$json['data']['_id']);
+      \Session::put('created',$json['data']['created']);
+      foreach($json['data'] as $fase=>$data){
+        \Session::put('fase.'.$fase,$data);
+      }
+      \Session::put('faseActual','datosEmpresa');
+      \Session::put('faseActualDatos','fase.datosEmpresa');
+      $parametros  = $this->generaFases() + $this->generaDefinicion();
+      return \View::make('fsvte.fichaSVTE')->with($parametros);
     }else{
         return redirect('/svte');
     }
   }
 
   public function guardaFicha(Request $request){
-    \Session::reflash(); 
     $input = $request->input();
     unset($input['_token']);
     $validacion = $this->validaFase($input);
@@ -212,10 +225,11 @@ class fsvte extends Controller{
       if($faseArray){ 
         $input = [$input]; 
       }
-      if (count($input['documents']) != 0) {
+      // dd(\Session::all());
+      // dd(array_keys($input));
+      // if (count($input['documents']) != 0) {
         $input['vacio'] = false;
         $input['bloqueado'] = true;
-        $input['nombre'] = \Session::get(\Session::get('faseActualDatos').'.nombre');
         $parametros = [
           'security' => [
             'sessionId' => \Session::get('sessionId')
@@ -227,30 +241,47 @@ class fsvte extends Controller{
             ]
           ]
         ];
-      }else{
-        $retorno = json_encode(['color'=>'#C6383D',
-          'error'=> 99,
-          'msg'=> 'Debe ingresar un documento'
-        ]);
-        return $retorno;
-      }
+      // }else{
+      //   $retorno = json_encode(['color'=>'#C6383D',
+      //     'error'=> 99,
+      //     'msg'=> 'Debe ingresar un documento'
+      //   ]);
+      //   return $retorno;
+      // }
+
+      $arrayDocs = array_filter($input,function($a){ return is_array($a); });
       $confirmFile = [];
-      foreach($parametros['data']['modified'][\Session::get('faseActual')]['documents'] as $data){
-        sleep(2);
-        $confirmFile[] = $this->uploader->confirmarArchivo($data['url']);
-      }
-      for ($y=0; $y < count($confirmFile); $y++) { 
-        for ($x=0; $x < count($parametros['data']['modified'][\Session::get('faseActual')]['documents']); $x++) { 
-          if($confirmFile[$y]['data']['source'] === $parametros['data']['modified'][\Session::get('faseActual')]['documents'][$x]['url']){
-            $parametros['data']['modified'][\Session::get('faseActual')]['documents'][$x]['filePath'] = $confirmFile[$y]['data']['filePath']; 
-            $parametros['data']['modified'][\Session::get('faseActual')]['documents'][$x]['code'] = $confirmFile[$y]['error']['code'];
+      foreach ($arrayDocs as $key => $cont) { 
+        foreach($parametros['data']['modified'][\Session::get('faseActual')][$key] as $data){
+          if($data['code'] == null && $data['filePath'] == null && $data['status'] == null){
+            $confirmFile[] = $this->uploader->confirmarArchivo($data['url']);
+          }
+        }
+        for ($y=0; $y < count($confirmFile); $y++) { 
+          for ($x=0; $x < count($parametros['data']['modified'][\Session::get('faseActual')][$key]); $x++) {
+            if($confirmFile[$y]['data']['source'] === $parametros['data']['modified'][\Session::get('faseActual')][$key][$x]['url']){
+              $parametros['data']['modified'][\Session::get('faseActual')][$key][$x]['code'] = $confirmFile[$y]['error']['code'];
+              if($confirmFile[$y]['error']['code'] == 0){
+                $parametros['data']['modified'][\Session::get('faseActual')][$key][$x]['filePath'] = $confirmFile[$y]['data']['filePath']; 
+                $parametros['data']['modified'][\Session::get('faseActual')][$key][$x]['code'] = $confirmFile[$y]['error']['code'];
+                $parametros['data']['modified'][\Session::get('faseActual')][$key][$x]['status'] = true;
+                $parametros['data']['modified'][\Session::get('faseActual')][$key][$x]['url'] = null;
+              }else{
+                $parametros['data']['modified'][\Session::get('faseActual')][$key][$x]['filePath'] = null; 
+                $parametros['data']['modified'][\Session::get('faseActual')][$key][$x]['status'] = false;
+                $parametros['data']['modified'][\Session::get('faseActual')][$key][$x]['url'] = null;
+              }
+            }
           }
         }
       }
+
+    //   dd($parametros);
+      
       $json = $util->muleConnection('PUT','/comsoc/schemaExpediente',10017,$parametros);
       if($json['error']['code']==0){
         \Session::forget('fase.'.\Session::get('faseActual'));
-        \Session::flash('fase.'.\Session::get('faseActual'),$json['data'][\Session::get('faseActual')]);
+        \Session::put('fase.'.\Session::get('faseActual'),$json['data'][\Session::get('faseActual')]);
         $retorno = json_encode(['color'=>'blue',
           'error'=>$json['error']['code'],
           'msg'=>$json['error']['msg'],
@@ -258,7 +289,7 @@ class fsvte extends Controller{
         ]);
         if($faseArray){
           \Session::forget('faseStatus.'.\Session::get('faseActual'));
-          \Session::flash('faseStatus.'.\Session::get('faseActual'),'table');
+          \Session::put('faseStatus.'.\Session::get('faseActual'),'table');
           \Session::forget('faseArrayEdit');
         }
       }else{
@@ -275,6 +306,14 @@ class fsvte extends Controller{
       ]); 
     }
     return $retorno;
+  }
+
+  public function getFilebyPath(Request $request){
+    $file = $this->getFile($request->file,false);
+    $fileInfo = pathinfo($request->file);
+    return \Response::make($file,'200',array(
+      'Content-Type'=>'application/pdf'
+    ));
   }
 
   // public function finRegistro(Request $request){
@@ -432,8 +471,8 @@ class fsvte extends Controller{
 
   public function validaFase(&$fase){
     $valido = true;
+    // dd(\App\StaticContent::obtieneDefinicionFSVTE());
     $retorno = collect(\App\StaticContent::obtieneDefinicionFSVTE())->map(function($i,$k) use(&$fase,&$valido){
-    //   dd([$i, $k, $fase, $valido]);
       if($i['tipo'] == 'container'){
         if($i['unico']){
           if(!isset($i['tabla'])){ 
@@ -534,11 +573,11 @@ class fsvte extends Controller{
       }else{
         if($i['tipo'] == 'upload'){
             $code = 0;
-            if(!isset($fase['documents']) && !\Session::has('fase.'.\Session::get('faseActual').'.documents') &&  empty(\Session::get('fase.'.\Session::get('faseActual').'.documents'))){
-              $fase['documents'] = [];
+            if(!isset($fase[$k]) && !\Session::has('fase.'.\Session::get('faseActual').'.'.$k) &&  empty(\Session::get('fase.'.\Session::get('faseActual').'.'.$k))){
+              $fase[$k] = [];
             }else{ 
-                if(!isset($fase['documents'])) $fase['documents'] = [];
-                if(!empty(\Session::get('fase.'.\Session::get('faseActual').'.documents'))){
+                if(!isset($fase[$k])) $fase[$k] = [];
+                if(!empty(\Session::get('fase.'.\Session::get('faseActual').'.'.$k))){
                   // foreach(\Session::get('fase.'.\Session::get('faseActual').'.documents') as $documento){
                       // $documentos[$documento['id']] = $documento;
                       // $i=$documento['id']+1;
@@ -549,17 +588,20 @@ class fsvte extends Controller{
                   $i=0;
                   $documentos = [];
                 }
-                // dd($fase['documents']);
-                foreach($fase['documents'] as $documento){
+                // dd($fase[$k]);
+                foreach($fase[$k] as $documento){
+                //   dd($documento);
                   if(trim($documento['nombreDocumento']) == ''){ $code = 'Todos los archivos deben tener título'; $valido = false; }
                   $documentos[$i] = [
-                    'id'=>$i,
                     'originalName' => $documento['nombreDocumento'],
-                    'url' => $documento['url']   
+                    'url' => isset($documento['url']) ? $documento['url'] : null ,
+                    'filePath' => isset($documento['filePath']) ? $documento['filePath'] : null,
+                    'code' => isset($documento['code']) ? (int)$documento['code'] : null,
+                    'status' => isset($documento['status']) ? (bool)$documento['status'] : null
                   ];
                   $i++;
                 }
-                $fase['documents'] = $documentos;
+                $fase[$k] = $documentos;
                 // dd($fase['documents']);
             }
         }else{

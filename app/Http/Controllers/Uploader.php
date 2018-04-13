@@ -100,7 +100,7 @@ class Uploader extends Controller
 			        ],
 			        [
 			            'name'     => 'token',
-			            'contents' => env('UPLOAD_TOKEN'),
+			            'contents' => $this->keyUpload,
 			        ],
 			        [
 			            'name'     => 'ruta',
@@ -138,7 +138,7 @@ class Uploader extends Controller
 			        ],
 			        [
 			            'name'     => 'token',
-			            'contents' => env('UPLOAD_TOKEN'),
+			            'contents' => $this->keyUpload,
 			        ],
 			        [
 			            'name'     => 'ruta',
