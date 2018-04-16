@@ -262,6 +262,12 @@
                         .attr('original-title',i)
                         .tipsy({ trigger: 'manual', gravity: 'w'})
                         .tipsy('show');
+                      $("#buttonFileUpload_"+k+"").addClass('bordeRojo')
+                        .attr('original-title',i)
+                        .tipsy({ trigger: 'manual', gravity: 'w'})
+                        .tipsy('show');
+                    }else{
+                      $("#buttonFileUpload_"+k+"").removeClass('bordeRojo');
                     }
                   }else{
                     $.each(i,function(k2,i2){

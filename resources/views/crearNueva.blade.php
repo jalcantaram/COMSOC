@@ -19,20 +19,31 @@
   <h2>Captura de Expedinte</h2>
     <form id="form" action="{{ url('/nfsvte')}}" role="form" method="POST">
       <input type="hidden" name="_token" value="{{ csrf_token() }}">
-      <div class="form-inline">
+      <div class="form-horizontal">
         <div class="form-group">
-          <label class="col-md-2 control-label" for="tipoExp">Tipo:</label>
-          <div class="col-xs-3">
-            <select class="form-control" name="tipo[]" id="tipoExp" multiple required>
-              <option selected disabled value="">Selecciona el tipo de expediente</option>
-              <option value="prensa|Prensa">Prensa</option>
-              <option value="radio|Radio">Radio</option>
-              <option value="television|Televisión">Televisión</option>
-              <option value="internet|Internet">Internet</option>
-              <option value="monimedios|Monitor de medios">Monitor de medios</option>
-              <option value="revista|Revista">Revista</option>
-              <option value="otro|Otro">Otro</option>
-            </select>
+          <label class="col-md-1 control-label" for="tipoExp">Tipo:</label>
+          <div class="col-md-6">
+            <div class="checkbox">
+              <label><input type="checkbox" name="tipo[]" value="prensa|Prensa">Prensa</label>
+            </div>
+            <div class="checkbox">
+              <label><input type="checkbox" name="tipo[]" value="radio|Radio">Radio</label>
+            </div>
+            <div class="checkbox">
+              <label><input type="checkbox" name="tipo[]" value="television|Televisión">Televisión</label>
+            </div>
+            <div class="checkbox">
+              <label><input type="checkbox" name="tipo[]" value="internet|Internet">Internet</label>
+            </div>
+            <div class="checkbox">
+              <label><input type="checkbox" name="tipo[]" value="monimedios|Monitor de medios">Monitor de medios</label>
+            </div>
+            <div class="checkbox">
+              <label><input type="checkbox" name="tipo[]" value="revista|Revista">Revista</label>
+            </div>
+            <div class="checkbox">
+              <label><input type="checkbox" name="tipo[]" value="otro|Otro">Otro</label>
+            </div>            
           </div>
         </div>
       </div>
@@ -69,7 +80,7 @@
           <h4>-</h4>
         </div>
         <div class="form-group">
-          <select class="form-control" name="year" id="year" required>
+          <select class="form-control" name="year" id="year" required style="width:80px;">
             <option selected disabled value="">Selecciona un año</option>
           </select>
         </div>

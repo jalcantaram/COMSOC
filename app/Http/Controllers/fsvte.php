@@ -150,44 +150,49 @@ class fsvte extends Controller{
   public function creaFicha(Request $request){
     $input = $request->input();
     $util = new Utilidades();
-    $typeName = $input['tipo'];
-    $res = [];
-    foreach ($typeName as $key => $value) {
-      list($k, $v) = explode('|', $value);
-      $res[$k] = $v;
-    }
-    $parametros = [
-      'security'=>[
-        'sessionId' => \Session::get('sessionId')
-      ],
-      'data'=>[
-        'anio' => (int)$input['year'],
-        $this->generaFases()['sidebar']['datosEmpresa']['id'] => [
-          'bloquedo' => false,
-          'vacio' => true,
-        ],
-        'type' => $res
-      ]
-    ];
-    $json = $util->muleConnection('POST','/comsoc/saveSchemaExpediente', 10017,$parametros);
-    if($json['error']['code']==0){
-      \Session::put('idExpediente',$json['data']['idExpediente']);
-      \Session::put('created',$json['data']['created']);
-      foreach($json['data'] as $fase => $data){
-        \Session::put('fase.'.$fase, $data);
+    if(isset($input['tipo'])){
+      $typeName = $input['tipo'];
+      $res = [];
+      foreach ($typeName as $key => $value) {
+        list($k, $v) = explode('|', $value);
+        $res[$k] = $v;
       }
-      \Session::put('faseActual','datosEmpresa');
-      \Session::put('faseActualDatos','fase.datosEmpresa');
-      $parametros  = $this->generaFases() + $this->generaDefinicion();
-      \Session::put('urlBack', '/svte');        
-      return redirect('/efsvte?f='.$json['data']['idExpediente']);
+      $parametros = [
+        'security'=>[
+          'sessionId' => \Session::get('sessionId')
+        ],
+        'data'=>[
+          'anio' => (int)$input['year'],
+          $this->generaFases()['sidebar']['datosEmpresa']['id'] => [
+            'bloquedo' => false,
+            'vacio' => true,
+          ],
+          'type' => $res
+        ]
+      ];
+      $json = $util->muleConnection('POST','/comsoc/saveSchemaExpediente', 10017,$parametros);
+      if($json['error']['code']==0){
+        \Session::put('idExpediente',$json['data']['idExpediente']);
+        \Session::put('created',$json['data']['created']);
+        foreach($json['data'] as $fase => $data){
+          \Session::put('fase.'.$fase, $data);
+        }
+        \Session::put('faseActual','datosEmpresa');
+        \Session::put('faseActualDatos','fase.datosEmpresa');
+        $parametros  = $this->generaFases() + $this->generaDefinicion();
+        \Session::put('urlBack', '/svte');        
+        return redirect('/efsvte?f='.$json['data']['idExpediente']);
+      }else{
+        $retorno = json_encode(['color'=>'#C6383D',
+          'error'=>$json['error']['code'],
+          'msg'=>$json['error']['msg']
+        ]);
+        return redirect('/svte')->with($retorno);          
+      }  
     }else{
-      $retorno = json_encode(['color'=>'#C6383D',
-        'error'=>$json['error']['code'],
-        'msg'=>$json['error']['msg']
-      ]);
-      return redirect('/svte')->with($retorno);          
-    }     
+      flash('Selecciona un tipo de medio.')->error();
+      return redirect('/crearNueva');
+    }
   }
 
   public function editaFicha(Request $request){
@@ -225,7 +230,6 @@ class fsvte extends Controller{
       if($faseArray){ 
         $input = [$input]; 
       }
-      // dd(\Session::all());
       // dd(array_keys($input));
       // if (count($input['documents']) != 0) {
         $input['vacio'] = false;
@@ -275,8 +279,6 @@ class fsvte extends Controller{
           }
         }
       }
-
-    //   dd($parametros);
       
       $json = $util->muleConnection('PUT','/comsoc/schemaExpediente',10017,$parametros);
       if($json['error']['code']==0){
@@ -485,7 +487,6 @@ class fsvte extends Controller{
                       $search = ['https://','https:/','https:','https','http://','http:/','http:','http'];
                       $replace = ['__#s:__','__#s:__','__#s:__','__#s:__','__#:__','__#:__','__#:__','__#:__'];
                       foreach($itemDetalles as $iKey=>$iDetalles){
-                          //dd($iKey);
                           if($detalle['detalle'][$iKey]['tipo']=='url'){ //dd($iDetalles);
                               $iDetalles = str_replace($search,$replace,$iDetalles);
                               if(strpos($iDetalles,'__#s:__') === false && strpos($iDetalles,'__#:__') === false){
@@ -572,38 +573,32 @@ class fsvte extends Controller{
         } 
       }else{
         if($i['tipo'] == 'upload'){
-            $code = 0;
-            if(!isset($fase[$k]) && !\Session::has('fase.'.\Session::get('faseActual').'.'.$k) &&  empty(\Session::get('fase.'.\Session::get('faseActual').'.'.$k))){
-              $fase[$k] = [];
-            }else{ 
-                if(!isset($fase[$k])) $fase[$k] = [];
-                if(!empty(\Session::get('fase.'.\Session::get('faseActual').'.'.$k))){
-                  // foreach(\Session::get('fase.'.\Session::get('faseActual').'.documents') as $documento){
-                      // $documentos[$documento['id']] = $documento;
-                      // $i=$documento['id']+1;
-                  // }
-                  $i=0;
-                  $documentos = [];
-                }else{
-                  $i=0;
-                  $documentos = [];
-                }
-                // dd($fase[$k]);
-                foreach($fase[$k] as $documento){
-                //   dd($documento);
-                  if(trim($documento['nombreDocumento']) == ''){ $code = 'Todos los archivos deben tener título'; $valido = false; }
-                  $documentos[$i] = [
-                    'originalName' => $documento['nombreDocumento'],
-                    'url' => isset($documento['url']) ? $documento['url'] : null ,
-                    'filePath' => isset($documento['filePath']) ? $documento['filePath'] : null,
-                    'code' => isset($documento['code']) ? (int)$documento['code'] : null,
-                    'status' => isset($documento['status']) ? (bool)$documento['status'] : null
-                  ];
-                  $i++;
-                }
-                $fase[$k] = $documentos;
-                // dd($fase['documents']);
+          $code = 0;
+          if(!isset($fase[$k]) && empty(\Session::get('fase.'.\Session::get('faseActual').'.'.$k)) && $i['requerido']){
+            $code = 'Documento obligatorio!'; 
+            $valido = false;
+          }else{
+            if(!isset($fase[$k])) $fase[$k] = [];
+            if(!empty(\Session::get('fase.'.\Session::get('faseActual').'.'.$k))){
+              $i=0;
+              $documentos = [];
+            }else{
+              $i=0;
+              $documentos = [];
             }
+            foreach($fase[$k] as $documento){
+              if(count($documento) != 0){ $code = 'Todos los archivos deben tener título'; $valido = false; }
+              $documentos[$i] = [
+                'originalName' => $documento['nombreDocumento'],
+                'url' => isset($documento['url']) ? $documento['url'] : null ,
+                'filePath' => isset($documento['filePath']) ? $documento['filePath'] : null,
+                'code' => isset($documento['code']) ? (int)$documento['code'] : null,
+                'status' => isset($documento['status']) ? (bool)$documento['status'] : null
+              ];
+              $i++;
+            }
+            $fase[$k] = $documentos;
+          }
         }else{
             if($i['tipo'] == 'null'){
                 $code = 0;
@@ -653,7 +648,7 @@ class fsvte extends Controller{
       }else{
         // dd($i);
         if($i['tipo'] == 'boolean' && isset($fase[$k])) $fase[$k] = true;
-        if($i['tipo'] == 'boolean' && !isset($fase[$k])) $fase[$k] = false; 
+        if($i['tipo'] == 'boolean' && !isset($fase[$k])) $fase[$k] = false;
         if($i['requerido'] && $fase[$k] == trim('')){
             $valido = false;
             $code = 'El campo es requerido';

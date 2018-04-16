@@ -121,14 +121,12 @@ class StaticContent extends Model
     ],
     'apoderadoLegal' => [
       'name' => 'Apoderado legal',
-      'tipo' => 'container',
       'type' => ['prensa','radio', 'television', 'revista', 'internet', 'monitoreo', 'spot', 'filmacion', 'eventosJG', 'cineminuto', 'otro'],
-      'upload' => true,
       'data'=>[
         'nombreCompleto' => [
           'nombre' => 'Nombre(s)',
           'tipo' => 'string',
-          'minLong' => 10,
+          'minLong' => 3,
           'long' => 250,
           'requerido' => true,
           'uppercase' => true
@@ -136,7 +134,7 @@ class StaticContent extends Model
         'aPaterno' => [
           'nombre' => 'Apellido paterno',
           'tipo' => 'string',
-          'minLong' => 10,
+          'minLong' => 3,
           'long' => 250,
           'requerido' => true,
           'uppercase' => true
@@ -144,7 +142,7 @@ class StaticContent extends Model
         'aMaterno' => [
           'nombre' => 'Apellido materno',
           'tipo' => 'string',
-          'minLong' => 10,
+          'minLong' => 3,
           'long' => 250,
           'requerido' => true,
           'uppercase' => true
@@ -153,18 +151,18 @@ class StaticContent extends Model
           'nombre' => 'Registro Federal del Contribuyente (Apoderado)',
           'tipo' => 'rfc',
           'long' => 13,
-          'requerido' => true,
+          'requerido' => false,
           'uppercase' => true
         ],
-        'documents'=>[
-          'nombre'=>'Sección de documentos',
-          'tipo'=>'upload',
-          'long'=>100,
-          'requerido'=>false,
-          'th'=>[
+        'documents' => [
+          'nombre' => 'Sección de documentos',
+          'tipo' => 'upload',
+          'long' => 100,
+          'requerido' => false,
+          'th' => [
             'Título del documento',
             'Nombre del documento',
-          ],
+          ]
         ]
       ]
     ],
@@ -178,7 +176,7 @@ class StaticContent extends Model
           'nombre'=>'Requisición',
           'tipo'=>'upload',
           'long'=>100,
-          'requerido'=>false,
+          'requerido'=>true,
           'th'=>[
             'Título del documento',
             'Nombre del documento',
@@ -188,7 +186,7 @@ class StaticContent extends Model
           'nombre'=>'Autorización',
           'tipo'=>'upload',
           'long'=>100,
-          'requerido'=>false,
+          'requerido'=>true,
           'th'=>[
             'Título del documento',
             'Nombre del documento',

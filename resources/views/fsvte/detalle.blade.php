@@ -708,12 +708,16 @@
     @if(!isset($item['tag']) or !$item['tag'])
       <div class="form-group">
         <div class="col-lg-2">
-          <input id="envio" type="submit" value="Guardar">
+          @if(!Session::get('fase.'.Session::get('faseActual').'.vacio') && Session::get('fase.'.Session::get('faseActual').'.bloqueado'))
+            <input id="envio" type="submit" value="Guardar" disabled style="background:#8e8e8e;">
+          @else
+            <input id="envio" type="submit" value="Guardar">
+          @endif
         </div>
         @if($sidebar[Session::get('faseActual')]['array'])
-          <div class="col-lg-2">
-            <a href="{{url('/cancelFicha')}}" class="btn btn-primary">Cancelar</a>
-          </div>
+        <div class="col-lg-2">
+          <a href="{{url('/cancelFicha')}}" class="btn btn-primary">Cancelar</a>
+        </div>
         @endif
       </div>
     @endif
