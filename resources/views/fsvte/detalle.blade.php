@@ -210,7 +210,7 @@
                       dataType: 'json',
                       autoUpload: true,
                       acceptFileTypes: /(\.|\/)(pdf|zip)$/i,
-                      maxFileSize: 999000,
+                      maxFileSize: 25000000,
                       method: "POST"                      
                     }).on('fileuploadadd', function (e, data) {
                       $("#progressBar").css('width','0%');
@@ -226,7 +226,7 @@
                         $('#buttonFileUpload_{{ $key }} input[name="file"]').removeAttr("disabled");
                         buttonFile.removeAttr("disabled");
                         $('#file-upload-list-{{ $key }} #subiendo').remove();
-                        uploadList.append('<tr class="danger"><td><span>tipo de archivo no valido</span></td><td>'+file.name+'</td><td><button type="button" class="btn btn-danger" onclick="deleteUpload{{ $key }}(this)"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
+                        uploadList.append('<tr class="danger"><td><span>'+file.error+'</span></td><td>'+file.name+'</td><td><button type="button" class="btn btn-danger" onclick="deleteUpload{{ $key }}(this)"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
                         updateErroTable{{ $key }}();
                       }
                     }).on('fileuploadprogressall', function (e, data) {
