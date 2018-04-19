@@ -587,7 +587,6 @@ class fsvte extends Controller{
               $documentos = [];
             }
             foreach($fase[$k] as $documento){
-              if(count($documento) != 0){ $code = 'Todos los archivos deben tener título'; $valido = false; }
               $documentos[$i] = [
                 'originalName' => $documento['nombreDocumento'],
                 'url' => isset($documento['url']) ? $documento['url'] : null ,

@@ -173,7 +173,6 @@
                     var rowsCount = document.getElementById("file-upload-list-{{ $key }}").rows.length;
                     for (var i =0; i < rowsCount; i++){
                       var x = document.getElementById('file-upload-list-{{ $key }}');
-                      console.log(x);
                       x.rows[i].cells[0].getElementsByTagName("input")[0].setAttribute('name', '{{$key}}['+i+'][url]');
                       x.rows[i].cells[0].getElementsByTagName("input")[1].setAttribute('name', '{{$key}}['+i+'][nombreDocumento]');
                       x.rows[i].cells[0].getElementsByTagName("input")[2].setAttribute('name', '{{$key}}['+i+'][filePath]');
@@ -210,6 +209,7 @@
                       dataType: 'json',
                       autoUpload: true,
                       acceptFileTypes: /(\.|\/)(pdf|zip)$/i,
+                      maxChunkSize: 1000000,
                       maxFileSize: 25000000,
                       method: "POST"                      
                     }).on('fileuploadadd', function (e, data) {
@@ -219,6 +219,7 @@
                       idSequence++;
                       $('#buttonFileUpload_{{ $key }} input[name="file"]').attr("disabled", true);
                       buttonFile.attr("disabled", "disabled");
+                      $('#envio').attr("disabled", true);
                       uploadList.append('<tr id="subiendo"><td><div class="progress"><div id="progressBar" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%">0%</div></div></td></tr>');
                     }).on('fileuploadprocessalways', function (e, data) {                      
                       var index = data.index, file = data.files[index];
@@ -236,6 +237,7 @@
                     }).on('fileuploaddone', function (e, data) {
                       $('#buttonFileUpload_{{ $key }} input[name="file"]').removeAttr("disabled");
                       buttonFile.removeAttr("disabled");
+                      $('#envio').removeAttr("disabled");
                       $('#file-upload-list-{{ $key }} #subiendo').remove();
                       $("#progressBar").removeClass('progress-bar-striped');
                       uploadList.append('<tr id="'+idSequence+'"><td><input type="hidden" id="documentsUrl" value="'+data.result.path + data.result.name+'"><input type="hidden" id="nombreDocumento" value="'+filename+'"><div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="100" aria-valuemax="100" style="width:100%">100%</div></div></td><td>'+filename+'</td><td><button type="button" class="btn btn-danger" onclick="deleteUpload{{ $key }}(this)"><span class="glyphicon glyphicon-trash"></span></button></td></tr>');
