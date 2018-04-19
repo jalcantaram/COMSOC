@@ -31,7 +31,7 @@
     </div>  
     <div class="divIzquierdo">
       <div class="sidebar">
-        <div class="titulo" style="font-size:18px">Registro de Viático</div>
+        <div class="titulo" style="font-size:18px">Registro de expediente</div>
         <div class="elementos">
           <ul>
             @foreach($sidebar as $key => $item)
