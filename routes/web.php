@@ -19,28 +19,33 @@ Route::get('/logout',function(){return redirect(env('APP_PLATAFORMA').'/logout')
 
 // Route::get('/principal','Main@principal')->middleware('auth.plataforma');
 Route::get('/principal','Principal@svte')->middleware('auth.plataforma');
-Route::get('/crearNueva', function(){return view('crearNueva');});
+Route::get('/crearNueva', function(){
+	return view('crearNueva');
+});
 // Route::get('/autorizadas', 'Principal@svteAutOperativo');
 // Route::get('/rechazadas', 'Principal@svteRechOperativo');
 
-// Route::post('/gfsvte','fsvte@guardaFicha');
+Route::post('/gfsvte','fsvte@guardaFicha');
 Route::post('/nfsvte', 'fsvte@creaFicha');
 Route::post('/getSecuencia', 'fsvte@getSecuencia');
+
+Route::get('/getFile','fsvte@getFilebyPath');
+
 // Route::post('/ffsvte','fsvte@finRegistro');
 // Route::post('/newItem','fsvte@nuevoItem');
 // Route::post('/newItemModal','fsvte@nuevoItemModal');
 // Route::post('/loadItemModal','fsvte@cargaItemModal');
-// Route::post('/sendFile','Principal@envioArchivos');
+Route::post('/sendFile','Principal@envioArchivos');
 
-// Route::get('/efsvte', 'fsvte@editaFicha');
-// Route::get('/getDocumentPdf/{id}','Principal@obtienePdf');
+Route::get('/efsvte', 'fsvte@editaFicha');
+Route::get('/getDocumentPdf/{id}','Principal@obtienePdf');
 Route::get('/svte','Principal@svte');
 // Route::get('/info', 'fsvte@getDetail');
 // Route::get('/getEstados', 'fsvte@getEstados');
 // Route::get('/getMunicipio', 'fsvte@getMunicipio');
 // Route::get('/getContinente', 'fsvte@getContinente');
 // Route::get('/getPaisInternacional', 'fsvte@getPaisInternacional');
-// Route::get('/svte/{id}','Principal@svteid');
+Route::get('/svte/{id}','Principal@svteid');
 // Route::get('/cancelFicha','Principal@cancelarFichaArray');
 // Route::get('/addFicha','Principal@agregaFichaArray');
 // Route::get('/editFicha/{id}','Principal@editaFichaArray');

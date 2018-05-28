@@ -7,10 +7,197 @@ use Illuminate\Database\Eloquent\Model;
 class StaticContent extends Model
 {
   const FASES = [
+    'datosEmpresa' => [
+      'name' => 'Datos de la Empresa',
+      'type' => ['prensa','radio', 'television', 'revista', 'internet', 'monitoreo', 'spot', 'filmacion', 'eventosJG', 'cineminuto', 'otro'],
+      'upload' => true,
+      'data' => [
+        'nombreComercial' => [
+          'nombre' => 'Nombre Comercial (Empresa)',
+          'tipo' => 'string',
+          'long' => 250,
+          'minLong' => 5,
+          'requerido' => true,
+          'uppercase' => true
+        ],
+        'razonSocial' => [
+          'nombre' => 'Razón Social',
+          'tipo' => 'string',
+          'long' => 250,
+          'requerido' => true,
+          'uppercase' => true
+        ],
+        'rfcProveedor' => [
+          'nombre' => 'Registro Federal del Contribuyente (Empresa)',
+          'tipo' => 'rfc',
+          'long' => 13,
+          'requerido' => true,
+          'uppercase' => true
+        ],
+        'documents'=>[
+          'nombre'=>'Sección de documentos',
+          'tipo'=>'upload',
+          'long'=>100,
+          'requerido'=>false,
+          'th'=>[
+            'Título del documento',
+            'Nombre del documento',
+          ],
+        ]
+      ]  
+    ],
+    'datosContrato' => [
+      'name' => 'Datos del contrato',
+      'type' => ['prensa','radio', 'television', 'revista', 'internet', 'monitoreo', 'spot', 'filmacion', 'eventosJG', 'cineminuto', 'otro'],
+      'upload' => true,
+      'data' =>[
+        'numeroContrato' =>[
+          'nombre' => 'Numero de contrato',
+          'tipo' => 'string',
+          'minLong' => 12,
+          'long' => 250,
+          'uppercase' => true,
+          'requerido' => true,
+        ],
+        'montoContrato' => [
+          'nombre' => 'Monto Contrato',
+          'tipo' => 'double',
+          'long' => 250,
+          'requerido' => true,
+        ],
+        'suficienciaPresupuestal' =>[
+          'nombre' => 'Suficiencia presupuestal',
+          'tipo' => 'string',
+          'long' => 250,
+          'requerido' => true,
+        ],
+        'partida' =>[
+          'nombre' => 'Partida',
+          'tipo' => 'number',
+          'long' => 5,
+          'requerido' => true,
+        ],
+        'tipoContratacion' =>[
+          'nombre' => 'Tipo de contratación',
+          'tipo' => 'string',
+          'long' => 250,
+          'requerido' => false,
+        ],
+        'fundamento' =>[
+          'nombre' => 'Fundamento',
+          'tipo' => 'string',
+          'long' => 250,
+          'requerido' => false,
+        ],
+        'fechaFirma' =>[
+          'nombre' => 'Fecha de firma',
+          'tipo' => 'date',
+          'format'=>'c',
+          'requerido'=>true,
+        ],
+        'vigencia' =>[
+          'nombre' => 'Vigencia',
+          'tipo' => 'date',
+          'format'=>'c',
+          'requerido'=>true,
+        ],
+        'recurso' =>[
+          'nombre' => 'Recurso',
+          'tipo' => 'string',
+          'long' => 250,
+          'requerido'=>false,
+        ],
+        'documents'=>[
+          'nombre'=>'Sección de documentos',
+          'tipo'=>'upload',
+          'long'=>100,
+          'requerido'=>false,
+          'th'=>[
+            'Título del documento',
+            'Nombre del documento',
+          ],
+        ]
+      ]
+    ],
+    'apoderadoLegal' => [
+      'name' => 'Apoderado legal',
+      'type' => ['prensa','radio', 'television', 'revista', 'internet', 'monitoreo', 'spot', 'filmacion', 'eventosJG', 'cineminuto', 'otro'],
+      'data'=>[
+        'nombreCompleto' => [
+          'nombre' => 'Nombre(s)',
+          'tipo' => 'string',
+          'minLong' => 3,
+          'long' => 250,
+          'requerido' => true,
+          'uppercase' => true
+        ],
+        'aPaterno' => [
+          'nombre' => 'Apellido paterno',
+          'tipo' => 'string',
+          'minLong' => 3,
+          'long' => 250,
+          'requerido' => true,
+          'uppercase' => true
+        ],
+        'aMaterno' => [
+          'nombre' => 'Apellido materno',
+          'tipo' => 'string',
+          'minLong' => 3,
+          'long' => 250,
+          'requerido' => true,
+          'uppercase' => true
+        ],
+        'rfcProveedor' => [
+          'nombre' => 'Registro Federal del Contribuyente (Apoderado)',
+          'tipo' => 'rfc',
+          'long' => 13,
+          'requerido' => false,
+          'uppercase' => true
+        ],
+        'documents' => [
+          'nombre' => 'Sección de documentos',
+          'tipo' => 'upload',
+          'long' => 100,
+          'requerido' => false,
+          'th' => [
+            'Título del documento',
+            'Nombre del documento',
+          ]
+        ]
+      ]
+    ],
     'requisicion'=>[
-      'name'=>'Detalles de la Comisión',
+      'name'=>'Requisición',
       'tipo'=>'container',
-      'type'=>['nacional','internacional'],
+      'type'=>['prensa','radio', 'television', 'revista', 'internet', 'monitoreo', 'spot', 'filmacion', 'eventosJG', 'cineminuto', 'otro'],
+      'upload'=>true,
+      'data'=>[
+        'requisicion'=>[
+          'nombre'=>'Requisición',
+          'tipo'=>'upload',
+          'long'=>100,
+          'requerido'=>true,
+          'th'=>[
+            'Título del documento',
+            'Nombre del documento',
+          ]
+        ],
+        'autorizacion'=>[
+          'nombre'=>'Autorización',
+          'tipo'=>'upload',
+          'long'=>100,
+          'requerido'=>true,
+          'th'=>[
+            'Título del documento',
+            'Nombre del documento',
+          ]
+        ]        
+      ]
+    ],
+    'invitacion'=>[
+      'name'=>'Invitacion',
+      'tipo'=>'container',
+      'type'=>['prensa','radio', 'television', 'revista', 'internet', 'monitoreo', 'spot', 'filmacion', 'eventosJG', 'cineminuto', 'otro'],
       'upload'=>true,
       'data'=>[
         'nomComision'=>[
@@ -49,513 +236,8 @@ class StaticContent extends Model
           ],
         ]
       ]
-    ],
-    'registroPersonalNacional'=>[
-      'name'=> 'Registro de Personal Comisionado',
-      'array'=>true,
-      'type' => ['nacional'],
-      'addItemLabel'=>'Comisionados Nacionales',
-      'tableDisplay'=>'comisionados.nombres.paterno.materno',
-      'data' => [
-        'genero'=>[
-          'nombre'=>'Genero',
-          'tipo'=>'select',
-          'src'=>[
-            'tipo'=>'static',
-            'id'=>'descripcion'
-          ],
-          'datos'=>['Masculino','Femenino'],
-          'long'=>100,
-          'requerido'=>true
-        ],
-        'nombres'=>[
-          'nombre'=>'Nombre(s)',
-          'tipo'=>'string',
-          'long'=>200,
-          'requerido'=>true
-        ],
-        'paterno'=>[
-          'nombre'=>'Apellido paterno',
-          'tipo'=>'string',
-          'long'=>200,
-          'requerido'=>true
-        ],
-        'materno'=>[
-          'nombre'=>'Apellido materno',
-          'tipo'=>'string',
-          'long'=>200,
-          'requerido'=>true
-        ],
-        'mail'=>[
-          'nombre'=>'Correo electrónico (de preferencia correo institucional)',
-          'tipo'=>'mail',
-          'long'=>200,
-          'requerido'=>true
-        ],
-        'tipoIntegrante'=>[
-          'nombre'=>'Tipo de integrante del sujeto obligado',
-          'tipo'=>'select',
-          'src'=>[
-            'tipo'=>'static',
-            'id'=>'descripcion'
-          ],
-          'datos'=>['Confianza', 'Honorarios', 'Otro'],
-          'long'=>100,
-          'requerido'=>false
-        ],        
-        'numeroEmpleado'=>[
-          'nombre'=>'Número de empleado',
-          'tipo'=>'number',
-          'long'=>10,
-          'minLong'=>4,
-          'requerido'=>false
-        ],
-        'denominacionCargo'=>[
-          'nombre'=>'Denominación del cargo (De conformidad con el nombramiento otorgado)',
-          'tipo'=>'string',
-          'long'=>200,
-          'requerido'=>false
-        ],
-        'nivelPuesto'=>[
-          'nombre'=>'Nivel de puesto (Nomenclatura numérica)',
-          'tipo'=>'number',
-          'long'=>200,
-          'requerido'=>false
-        ],
-        'areaAdscripcion'=>[
-          'nombre'=>'Area de Adscripción o Unidad Administrativa',
-          'tipo'=>'string',
-          'long'=>400,
-          'requerido'=>true
-        ],
-        'objetivoComisionado'=>[
-          'nombre'=>'Objetivo del comisionado',
-          'tipo'=>'textarea',
-          'long'=>1500,
-          'requerido'=>false
-        ],
-        'actividadesRealizar'=>[
-          'nombre'=>'Actividades a realizar',
-          'tipo'=>'textarea',
-          'long'=>1500,
-          'requerido'=>false
-        ],
-        'viajeViaticos'=>[
-          'nombre'=>'Financiado',
-          'tipo'=>'select',
-          'src'=>[
-            'tipo'=>'static',
-            'id'=>'descripcion'
-          ],
-          'datos'=>['No','Parcial sólo Pasajes','Parcial sólo Viáticos','Parcial Viáticos y Pasajes','Total'],
-          'long'=>100,
-          'requerido'=>false
-        ],
-        'pasajes'=>[
-          'nombre' => 'pasajes',
-          'tipo'=>'container',
-          'long'=>100,
-          'requerido'=>false,
-          'unico'=>false,
-          'th'=>[
-            'Pasajes (De acuerdo a la partida que corresponda)',
-            'Ingrese monto de pasajes'
-          ],
-          'encabezado'=>'Monto de Pasajes',
-          'detalle'=>[
-            'pasajesPartida'=>[
-              'nombre'=>'Pasajes',
-              'tipo'=>'select',
-              'src'=>[
-                'tipo'=>'static',
-                'id'=>'descripcion'
-              ],
-              'datos'=>['3711 - Pasajes aéreos nacionales', '3721 - Pasajes terrestres nacionales', '3722 - Pasajes terrestres al interior del Distrito Federal', '3723 - Traslado terrestre de personas'],
-              'long'=>100,
-              'requerido'=>false
-            ],
-            'montoPasajes'=>[
-              'tipo'=>'double',
-              'long'=>100,
-              'requerido'=>true
-            ] 
-          ]
-        ],
-        'viaticos'=>[
-          'nombre' => 'viaticos',
-          'tipo'=>'container',
-          'long'=>100,
-          'requerido'=>false,
-          'unico'=>false,
-          'th'=>[
-            'Pasajes (De acuerdo a la partida que corresponda)',
-            'Ingrese monto de viáticos'
-          ],
-          'encabezado'=>'Monto de Viáticos',
-          'detalle'=>[
-            'viaticosPartida'=>[
-              'nombre'=>'Viáticos',
-              'tipo'=>'select',
-              'src'=>[
-                'tipo'=>'static',
-                'id'=>'descripcion'
-              ],
-              'datos'=>['3751 - Viáticos en el país', '3781 - Servicios integrales de traslado y viáticos', '3791 - Otros servicios de traslado y hospedaje'],
-              'long'=>100,
-              'requerido'=>false
-            ],
-            'montoViaticos'=>[
-              'tipo'=>'double',
-              'long'=>100,
-              'requerido'=>true
-            ] 
-          ]
-        ],        
-        'descripcionViatico'=>[
-          'nombre'=>'Descripcion de Viáticos',
-          'tipo'=>'textarea',
-          'long'=>1500,
-          'requerido'=>false
-        ],
-        'idaVuelta'=>[
-          'nombre'=>'Ida y Vuelta',
-          'tipo'=>'select',
-          'src'=>[
-            'tipo'=>'static',
-            'id'=>'descripcion'
-          ],
-          'datos'=>['Si','No'],
-          'long'=>100,
-          'requerido'=>false
-        ],
-        'saliendoEstadoNacional'=>[
-          'nombre'=>'Saliendo de (Estado)',
-          'tipo'=>'select',
-           'src'=>[
-            'tipo'=>'static',
-            'id'=>'saliendoEstadoNacional'
-          ],
-          'datos'=>[],
-          'long'=>100,
-          'requerido'=>false
-        ],
-        'saliendoMunicipioNacional'=>[
-          'nombre'=>'Saliendo de (Municipio)',
-          'tipo'=>'select',
-           'src'=>[
-            'tipo'=>'static',
-            'id'=>'saliendoMunicipioNacional'
-          ],
-          'datos'=>[],
-          'long'=>100,
-          'requerido'=>false
-        ],            
-        'llegandoEstadoNacional'=>[
-          'nombre'=>'Llegando a (Estado)',
-          'tipo'=>'select',
-           'src'=>[
-            'tipo'=>'static',
-            'id'=>'llegandoEstadoNacional'
-          ],
-          'datos'=>[],
-          'long'=>100,
-          'requerido'=>false
-        ],            
-        'llegandoMunicipioNacional'=>[
-          'nombre'=>'Llegando a (Municipio)',
-          'tipo'=>'select',
-           'src'=>[
-            'tipo'=>'static',
-            'id'=>'llegandoMunicipioNacional'
-          ],
-          'datos'=>[],
-          'long'=>100,
-          'requerido'=>false
-        ],
-        'dateSalida'=>[
-          'nombre'=>'Fecha de salida',
-          'tipo'=>'date',
-          'long'=>1500,
-          'format'=>'c',
-          'requerido'=>true,
-          'requiereAlmacenar'=>'_dateSalida'
-        ],
-        'dateRegreso'=>[
-          'nombre'=>'Fecha de regreso',
-          'tipo'=>'date',
-          'long'=>1500,
-          'format'=>'c',
-          'requerido'=>true,
-          'requiereValidar'=>'_dateSalida'
-        ]
-      ]
-    ],    
-    'registroPersonalInternacional'=>[
-      'name'=>'Registro de Personal Comisionado',
-      'array'=>true,
-      'type' => ['internacional'],
-      'addItemLabel'=>'Comisionados Internacionales',
-      'tableDisplay'=>'comisionados.nombres.paterno.materno',
-      'data' => [
-        'genero'=>[
-          'nombre'=>'Género',
-          'tipo'=>'select',
-          'src'=>[
-            'tipo'=>'static',
-            'id'=>'descripcion'
-          ],
-          'datos'=>['Masculino','Femenino'],
-          'long'=>100,
-          'requerido'=>true
-        ],
-        'nombres'=>[
-          'nombre'=>'Nombre(s)',
-          'tipo'=>'string',
-          'long'=>200,
-          'requerido'=>true
-        ],
-        'paterno'=>[
-          'nombre'=>'Apellido paterno',
-          'tipo'=>'string',
-          'long'=>200,
-          'requerido'=>true
-        ],
-        'materno'=>[
-          'nombre'=>'Apellido materno',
-          'tipo'=>'string',
-          'long'=>200,
-          'requerido'=>true
-        ],
-        'mail'=>[
-          'nombre'=>'Correo electrónico (de preferencia correo institucional)',
-          'tipo'=>'mail',
-          'long'=>200,
-          'requerido'=>true
-        ],
-        'tipoIntegrante'=>[
-          'nombre'=>'Tipo de integrante del sujeto obligado',
-          'tipo'=>'select',
-          'src'=>[
-            'tipo'=>'static',
-            'id'=>'descripcion'
-          ],
-          'datos'=>['Confianza', 'Honorarios', 'Otro'],
-          'long'=>100,
-          'requerido'=>false
-        ],        
-        'numeroEmpleado'=>[
-          'nombre'=>'Número de empleado',
-          'tipo'=>'number',
-          'long'=>10,
-          'minLong'=>4,
-          'requerido'=>false
-        ],
-        'denominacionCargo'=>[
-          'nombre'=>'Denominación del cargo (De conformidad con el nombramiento otorgado)',
-          'tipo'=>'string',
-          'long'=>200,
-          'requerido'=>false
-        ],
-        'nivelPuesto'=>[
-          'nombre'=>'Nivel de puesto (Nomenclatura numérica)',
-          'tipo'=>'number',
-          'long'=>200,
-          'requerido'=>false
-        ],
-        'areaAdscripcion'=>[
-          'nombre'=>'Area de Adscripción o Unidad Administrativa',
-          'tipo'=>'string',
-          'long'=>400,
-          'requerido'=>true
-        ],
-        'objetivoComisionado'=>[
-          'nombre'=>'Objetivo del comisionado',
-          'tipo'=>'textarea',
-          'long'=>1500,
-          'requerido'=>false
-        ],
-        'actividadesRealizar'=>[
-          'nombre'=>'Actividades a realizar',
-          'tipo'=>'textarea',
-          'long'=>1500,
-          'requerido'=>false
-        ],
-        'viajeViaticos'=>[
-          'nombre'=>'Financiado',
-          'tipo'=>'select',
-          'src'=>[
-            'tipo'=>'static',
-            'id'=>'descripcion'
-          ],
-          'datos'=>['No','Parcial sólo Pasajes','Parcial sólo Viáticos','Parcial Viáticos y Pasajes','Total'],
-          'long'=>100,
-          'requerido'=>false
-        ],
-        'pasajes'=>[
-          'nombre' => 'pasajes',
-          'tipo'=>'container',
-          'long'=>100,
-          'requerido'=>false,
-          'unico'=>false,
-          'th'=>[
-            'Pasajes (De acuerdo a la partida que corresponda)',
-            'Ingrese monto de pasajes'
-          ],
-          'encabezado'=>'Monto de Pasajes',
-          'detalle'=>[
-            'pasajesPartida'=>[
-              'nombre'=>'Pasajes',
-              'tipo'=>'select',
-              'src'=>[
-                'tipo'=>'static',
-                'id'=>'descripcion'
-              ],
-              'datos'=>['3711 - Pasajes aéreos nacionales', '3712 - Pasajes aéreos internacionales', '3721 - Pasajes terrestres nacionales', '3722 - Pasajes terrestres al interior del Distrito Federal', '3723 - Traslado terrestre de personas', '3724 - Pasajes terrestres internacionales'],
-              'long'=>100,
-              'requerido'=>false
-            ],
-            'montoPasajes'=>[
-              'tipo'=>'double',
-              'long'=>100,
-              'requerido'=>true
-            ] 
-          ]
-        ],
-        'viaticos'=>[
-          'nombre' => 'viaticos',
-          'tipo'=>'container',
-          'long'=>100,
-          'requerido'=>false,
-          'unico'=>false,
-          'th'=>[
-            'Pasajes (De acuerdo a la partida que corresponda)',
-            'Ingrese monto de viáticos'
-          ],
-          'encabezado'=>'Monto de Viáticos',
-          'detalle'=>[
-            'viaticosPartida'=>[
-              'nombre'=>'Viáticos',
-              'tipo'=>'select',
-              'src'=>[
-                'tipo'=>'static',
-                'id'=>'descripcion'
-              ],
-              'datos'=>['3751 - Viáticos en el país', '3761 - Viáticos en el extranjero', '3781 - Servicios integrales de traslado y viáticos', '3791 - Otros servicios de traslado y hospedaje'],
-              'long'=>100,
-              'requerido'=>false
-            ],
-            'montoViaticos'=>[
-              'tipo'=>'double',
-              'long'=>100,
-              'requerido'=>true
-            ] 
-          ]
-        ],        
-        'descripcionViatico'=>[
-          'nombre'=>'Descripcion de Viáticos',
-          'tipo'=>'textarea',
-          'long'=>1500,
-          'requerido'=>false
-        ],
-        'idaVuelta'=>[
-          'nombre'=>'Ida y Vuelta',
-          'tipo'=>'select',
-          'src'=>[
-            'tipo'=>'static',
-            'id'=>'descripcion'
-          ],
-          'datos'=>['Si','No'],
-          'long'=>100,
-          'requerido'=>false
-        ],
-        'saliendoContinenteInternacional'=>[
-          'nombre'=>'Saliendo de (Continente)',
-          'tipo'=>'select',
-          'src'=>[
-            'tipo'=>'static',
-            'id'=>'descripcion'
-          ],
-          // 'datos'=>['América', 'África', 'Asia', 'Europa', 'Oceanía'],
-          'datos'=>['América', 'África', 'Asia', 'Europa'],
-          'long'=>100,
-          'requerido'=>false
-        ],
-        'saliendoPaisInternacional'=>[
-          'nombre'=>'Saliendo de (País)',
-          'tipo'=>'select',
-           'src'=>[
-            'tipo'=>'static',
-            'id'=>'saliendoPaisInternacional'
-          ],
-          'datos'=>[],
-          'long'=>100,
-          'requerido'=>false
-        ],
-        'saliendoEntidadInternacional'=>[
-          'nombre'=>'Saliendo de (Ciudad)',
-          'tipo'=>'select',
-           'src'=>[
-            'tipo'=>'static',
-            'id'=>'saliendoEntidadInternacional'
-          ],
-          'datos'=>[],
-          'long'=>100,
-          'requerido'=>false
-        ],
-        'llegandoContinenteInternacional'=>[
-          'nombre'=>'Llegando a (Continente)',
-          'tipo'=>'select',
-          'src'=>[
-            'tipo'=>'static',
-            'id'=>'descripcion'
-          ],
-          // 'datos'=>['América', 'África', 'Asia', 'Europa', 'Oceanía'],          
-          'datos'=>['América', 'África', 'Asia', 'Europa'],
-          'long'=>100,
-          'requerido'=>false
-        ],               
-        'llegandoPaisInternacional'=>[
-          'nombre'=>'Llegando a (País)',
-          'tipo'=>'select',
-          'src'=>[
-            'tipo'=>'static',
-            'id'=>'descripcion'
-          ],
-          'datos'=>[],
-          'long'=>100,
-          'requerido'=>false
-        ],            
-        'llegandoEntidadInternacional'=>[
-          'nombre'=>'Llegando a (Ciudad)',
-          'tipo'=>'select',
-           'src'=>[
-            'tipo'=>'static',
-            'id'=>'descripcion'
-          ],
-          'datos'=>[],
-          'long'=>100,
-          'requerido'=>false
-        ],
-        'dateSalida'=>[
-          'nombre'=>'Fecha de salida',
-          'tipo'=>'date',
-          'long'=>1500,
-          'format'=>'c',
-          'requerido'=>true,
-          'requiereAlmacenar'=>'_dateSalida'
-        ],
-        'dateRegreso'=>[
-          'nombre'=>'Fecha de regreso',
-          'tipo'=>'date',
-          'long'=>1500,
-          'format'=>'c',
-          'requerido'=>true,
-          'requiereValidar'=>'_dateSalida'
-        ]
-      ]
-    ]    
+    ]   
   ];
-
 
   /**
    *  obtieneFasesFSVTE
@@ -565,7 +247,7 @@ class StaticContent extends Model
    *  Entrega nombres de las fases definidas en el modelo para construir en la vista
    *  los elementos en la barra lateral
    *
-   *  @package   Dictaminacion.App.StaticContent
+   *  @package   comsoc.app.StaticContent
    *  @author    Carlos González Armenta <cgonzaleza@cdmx.gob.mx>
    *  @copyright Oficialia Mayor de la Ciudad de México
    *         Dirección General de Gobernabilidad de Tecnologías de Información y Comunicaciones
@@ -577,8 +259,7 @@ class StaticContent extends Model
    *  @version   1.0
    *  @access    public
    *
-   */
-
+  */
     public static function obtieneFasesFSVTE($id){
       return collect(SELF::FASES)->map(function($i,$k) use($id){
         $array = ['id'=>$k,
@@ -597,7 +278,7 @@ class StaticContent extends Model
 
     public static function obtieneDefinicionFSVTE(){ 
       $obj = new self();
-      // dd([\Session::get('faseActual')]);
+      // dd(\Session::get('faseActual'));
       return collect(SELF::FASES[\Session::get('faseActual')]['data'])->map(function($i,$k) use($obj){
         if($i['tipo'] == 'select'){
           switch($i['src']['tipo']){
@@ -707,7 +388,8 @@ class StaticContent extends Model
               return $j;
             }
           });
-        } 
+        }
+        // dd($i);
         return $i;
       });
     }

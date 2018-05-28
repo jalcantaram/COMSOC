@@ -18,7 +18,6 @@
     <link href="{!! asset('assets/css/estilos.css') !!}" rel="stylesheet">
     <script src="{!! asset('assets/js/jQuery/jquery-2.2.3.min.js') !!}"></script>
     @yield('head')
-    @if(Session::get('user.roles.1') == 'Viatinet_Operativo' || Session::get('user.roles.1') == 'Viatinet_Titular' || Session::get('user.roles.1') =='Viatinet_supTitular' || Session::get('user.roles.1') == 'Viatinet_Dga' || Session::get('user.roles.1') =='Viatinet_supDga' || Session::get('user.roles.1') == 'Viatinet_Admin')
       <style type="text/css">
         .alert-info{
           background-color: blue;
@@ -47,7 +46,6 @@
           width: 280px;
         }
       </style>
-    @endif
   </head>
   <body>
     <!-- Fixed navbar -->
@@ -180,7 +178,7 @@
     <!-- Latest compiled and minified JavaScript -->
     @yield('js')
     <script>
-      $('div.alert').not('.alert-important').delay(3000).fadeOut(350);
+      $('div.alert').not('.alert-important').delay(5000).fadeOut(650);
       $('#flash-overlay-modal').modal();
     </script>
     @if(isset($modal) && $modal['mensaje'] != '')
